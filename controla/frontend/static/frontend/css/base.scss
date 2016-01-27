@@ -11,8 +11,9 @@ html, body {
 .main-wrapper {
   padding-top: 60px;
   min-height:100%;
-  height:100%;
+  //height:100%;
   margin-bottom:-60px;
+  padding-bottom: 90px;
 }
 
 footer {
@@ -20,4 +21,29 @@ footer {
   height: 60px;
   padding: 20px 0;
   text-align: center;
+}
+
+.main-title {
+  font-size: 3em;
+  border-bottom: 1px solid #DDD;
+}
+
+.proyecto-list {
+  i.fa {
+    font-size: 3em;
+  }
+  .btn-block{
+    display: inline-block;
+    margin-top: 3px;
+  }
+  h5 {
+    color: #eee;
+  }
+
+}
+
+.reasignar {
+  .autocomplete-light-widget {
+    display: block;
+  }
 }

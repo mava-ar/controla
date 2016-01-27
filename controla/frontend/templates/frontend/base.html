@@ -8,7 +8,7 @@
     <meta name="description" content="Sistema de control de ausentismo. Zille SRL. Recursos Humanos.">
     <meta name="author" content="Matías Varela">
 
-    <title>{% block title %}{%endblock %} RRHH - Zille</title>
+    <title>{% block title_head %}{%endblock %} RRHH - Zille</title>
     {% compress css %}
         {% stylesheet 'base' %}
     {%  endcompress %}
@@ -24,11 +24,14 @@
 
 <body>
 		{% block navbar %}{% endblock %}
+
 		{% block base_content %}{% endblock %}
+        <div style="clear: both"></div>
 		{% block footer %}{% endblock %}
-        {%  compress js %}
-        {% javascript 'base_js' %}
+        {% compress js %}
+            {% javascript 'base_js' %}
         {% endcompress %}
+        {% include 'autocomplete_light/static.html' %}
     {% block extra_js %}{% endblock %}
 </body>
 </html>

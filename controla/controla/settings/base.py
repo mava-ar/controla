@@ -24,6 +24,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'django_admin_bootstrapped',
+    'autocomplete_light',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -126,9 +127,11 @@ PIPELINE = {
         'base': {
             'source_filenames': (
                 'bootstrap-sass/assets/stylesheets/_bootstrap.scss',
+                'bootstrap3-dialog/dist/css/bootstrap-dialog.css',
                 'font-awesome/css/font-awesome.min.css',
-                'frontend/css/flatly.bootstrap.min.css',
+                'frontend/css/theme.bootstrap.min.css',
                 'frontend/css/base.scss',
+                'chosen/chosen.min.css',
             ),
             'output_filename': 'css/base.css',
             'extra_context': {
@@ -148,6 +151,8 @@ PIPELINE = {
             'source_filenames': (
                 'jquery/dist/jquery.js',
                 'bootstrap-sass/assets/javascripts/bootstrap.js',
+                'bootstrap3-dialog/dist/js/bootstrap-dialog.js',
+                'chosen/chosen.jquery.min.js',
             ),
             'output_filename': 'js/base_js.js',
         },
@@ -187,5 +192,9 @@ BOWER_INSTALLED_APPS = (
     'bootstrap-sass#3.3',
     'd3#3.3.13',
     'nvd3#1.7.1',
-    'fontawesome#4.3',
+    'fontawesome#4.5.0',
+    'bootstrap3-dialog#1.34.9',
+    'chosen#1.4.2'
 )
+
+ESTADO_DEFAULT = 5  # AUSENTE SIN AVISO

@@ -10,3 +10,4 @@ django-admin-bootstrapped>=2.5.7
 django-bootstrap3>=6.2.2
 django-libsass
 libsass>=0.9.3
+django-autocomplete-light

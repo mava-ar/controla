@@ -17,6 +17,7 @@ from django.contrib import admin
 
 
 urlpatterns = [
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('frontend.urls', namespace='frontend', app_name='frontend'))
 ]

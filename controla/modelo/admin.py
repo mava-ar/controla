@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Estado, Proyecto, CCT, Persona, Asistencia, RegistroAsistencia
+from .models import Estado, Proyecto, CCT, Persona, Asistencia, RegistroAsistencia, Responsable
 
 
 @admin.register(Estado)
@@ -11,7 +11,7 @@ class EstadoAdmin(admin.ModelAdmin):
 
 @admin.register(Proyecto)
 class ProyectoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'responsable', 'total_personas', 'activo_status')
+    list_display = ('nombre', 'total_personas', 'responsable', 'activo_status')
 
     search_fields = ('nombre', )
     ordering = ('fecha_baja', )
@@ -19,6 +19,12 @@ class ProyectoAdmin(admin.ModelAdmin):
     def activo_status(self, obj):
         return obj.activo
     activo_status.boolean = True
+
+    def responsable(self, obj):
+        if not obj.responsable_rel is None:
+            return obj.responsable_rel.persona
+        else:
+            return ""
 
 
 @admin.register(CCT)
@@ -46,3 +52,9 @@ class AsistenciaAdmin(admin.ModelAdmin):
     list_filter = ("proyecto", 'fecha', )
     inlines = [RegistroAsistenciaInlineAdmin, ]
     fields = ('fecha', 'proyecto', )
+
+
+@admin.register(Responsable)
+class ResponsableAdmin(admin.ModelAdmin):
+    list_display = ("proyecto", "persona", )
+    list_filter = ("proyecto", )

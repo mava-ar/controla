@@ -1,0 +1,82 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags %}
+{% block title %}
+    <h2 class="main-title">Alta de asistencia diaria</h2>
+{% endblock %}
+{% block content %}
+
+    <form action="." method="post" id="asistencia_form">
+    <div class="row">
+        <div class="col-sm-6"><h3>Proyecto: <strong>{{ proyecto }}</strong></h3></div>
+        <div class="col-sm-6"><h3>Fecha: <strong>{% now "d/m/Y" %}</strong></h3></div>
+    </div>
+
+        {% csrf_token %}
+        {{ formsets.management_form }}
+        {{ formsets.non_form_errors }}
+        {% bootstrap_form form %}
+
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th colspan="2">Estado de asistencia</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for fs in formsets %}
+            <tr data-index="{{ formsets.prefix }}">
+                <td>
+                    {{ personas|get_persona:fs }}
+                    {{ fs.persona }}
+
+                </td>
+                <td>{{ fs.estado }}</td>
+                <td><span class="text-danger">{{ fs.estado.errors|striptags }}</span></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+        <a class="btn btn-default" href="{% url 'frontend:index' %}">Volver</a> |
+        <input type="submit" value="Guardar" class="submit btn btn-primary" id="btn-submit"/>
+    </form>
+
+    {{ formset.as_p }}
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function(){
+               $("#asistencia_form select").chosen({'search_contains':true});
+
+                $("#btn-submit").click(function(e){
+                    e.preventDefault();
+                    showConfirm();
+                });
+            });
+            function showConfirm(){
+                BootstrapDialog.confirm({
+                    title: 'Presentación de asistencia',
+                    message: 'Está a punto de enviar la planilla de asistencia. Una vez enviada no se puede modificar.\n¿Desea continuar?',
+                    type: BootstrapDialog.TYPE_DANGER,
+                    closable: true, // <-- Default value is false
+                    draggable: true, // <-- Default value is false
+                    btnCancelLabel: 'No, cancelar!', // <-- Default value is 'Cancel',
+                    btnOKLabel: 'Si, continuemos!', // <-- Default value is 'OK',
+                    btnOKClass: 'btn-primary',
+                    callback: function(result) {
+                        // result will be true if button was click, while it will be false if users close the dialog directly.
+                        if(result) {
+                            $("#asistencia_form").submit();
+                        }
+                    }
+                });
+            }
+        })(jQuery);
+    </script>
+
+
+{% endblock %}

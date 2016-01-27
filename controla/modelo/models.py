@@ -1,6 +1,7 @@
 from django.db import models
-
+from django.conf import settings
 from dj_utils.models import BaseModel
+
 
 class Estado(BaseModel):
     """
@@ -25,10 +26,9 @@ class Proyecto(BaseModel):
     """
     Representa un proyecto de la empresa o Centro de Costo. Un persona es
     responsable de la asistencia.
+
     """
     nombre = models.CharField("nombre", max_length=255, unique=True)
-    responsable = models.ForeignKey("Persona", verbose_name="Responsable",
-                                    related_name="proyectos_responsable", null=True, blank=True)
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
 
     class Meta:
@@ -45,6 +45,25 @@ class Proyecto(BaseModel):
     @property
     def activo(self):
         return self.fecha_baja is None
+
+
+class Responsable(BaseModel):
+    """
+    Representa al responsable del proyecto, junto a sus configuraciones.
+
+    """
+    persona = models.ForeignKey("Persona", verbose_name="persona", related_name="responsable_rel", null=True)
+    proyecto = models.OneToOneField(Proyecto, verbose_name="proyecto", related_name="responsable_rel", null=True)
+
+    def __str__(self):
+        return "{} responsable de {}".format(
+            self.persona, self.proyecto
+        )
+
+    class Meta:
+        verbose_name = "responsable"
+        verbose_name_plural = "responsables"
+        unique_together = ('persona', 'proyecto', )
 
 
 class CCT(BaseModel):
@@ -78,6 +97,9 @@ class Persona(BaseModel):
     cct = models.ForeignKey(CCT, verbose_name="CCT", related_name="personas")
     proyecto = models.ForeignKey(Proyecto, verbose_name="proyecto",
                                  related_name="personas_involucradas")
+    usuario = models.ForeignKey('users.User', verbose_name="Usuario", null=True, blank=True, related_name="persona",
+                                help_text="Al asociar un usuario a la persona, este puede ingresar al sistema.")
+    fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
 
     class Meta:
         verbose_name = "persona"
@@ -86,6 +108,10 @@ class Persona(BaseModel):
 
     def __str__(self):
         return "{} {}".format(self.apellido, self.nombre)
+
+    @property
+    def activo(self):
+        return self.fecha_baja is None
 
 
 class Asistencia(BaseModel):
@@ -111,9 +137,8 @@ class Asistencia(BaseModel):
         return "{} - {}".format(self.fecha, self.proyecto)
 
     def save(self, *args, **kwargs):
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
         self.nombre_proyecto = self.proyecto.nombre
-        self.nombre_responsable = "{}".format(self.proyecto.responsable)
+        self.nombre_responsable = "{}".format(self.proyecto.responsable_rel.persona)
         super(Asistencia, self).save(*args, **kwargs)
 
     @property
@@ -129,7 +154,7 @@ class RegistroAsistencia(BaseModel):
     """
     asistencia = models.ForeignKey(Asistencia, related_name="items")
     persona = models.ForeignKey(Persona, related_name='registro_asistencia')
-    estado = models.ForeignKey(Estado, verbose_name="estado de presentismo")
+    estado = models.ForeignKey(Estado, verbose_name="estado de presentismo", default=settings.ESTADO_DEFAULT)
     codigo_estado = models.CharField(
         "Código", max_length=5, help_text="Se establecerá automaticamente con "
                                           "el código del estado seleccionado.")
@@ -143,7 +168,6 @@ class RegistroAsistencia(BaseModel):
         return "{} - {}".format(self.persona, self.asistencia)
 
     def save(self, *args, **kwargs):
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
         self.codigo_estado = self.estado.codigo
         super(RegistroAsistencia, self).save(*args, **kwargs)
 

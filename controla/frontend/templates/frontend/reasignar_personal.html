@@ -1,0 +1,63 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags %}
+{%  block title %}
+    <h2 class="main-title">Reasignación de personal</h2>
+{% endblock %}
+{% block content %}
+
+    <form action="." method="post" id="reasignar-form">
+        {% csrf_token %}
+        <div class="well">
+                Mediante esta herramiento, podrá cambiar el proyecto asignado a cualquier persona.
+                Este cambio se ve reflejado inmediantemente, por lo que la persona seleccionada
+                será listada en la lista del nuevo proyecto de forma inmediata.
+            </div>
+        <div class="row reasignar">
+
+            <div class="col-sm-6">
+                <p class="alert alert-danger">Primero, busque a la persona que desea cambiar de proyecto:</p>
+                {% bootstrap_field form.persona %}
+            </div>
+
+            <div class="col-sm-6">
+                <p class="alert alert-danger">Escoja su nuevo proyecto:</p>
+                {% bootstrap_field form.proyecto %}
+            </div>
+        </div>
+        <input type="submit" value="Reasignar" class="submit btn btn-primary" id="btn-submit"/>
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        (function($){
+
+
+            $(document).ready(function(){
+                $("#btn-submit").click(function(e){
+                    e.preventDefault();
+                    showConfirm();
+                });
+                $("#id_proyecto").chosen({'search_contains':true});
+            });
+            function showConfirm(){
+                BootstrapDialog.confirm({
+                    title: 'Reasignación de personal',
+                    message: 'Está a punto de cambiar de proyecto a la persona seleccionada. ¿Desea continuar?',
+                    type: BootstrapDialog.TYPE_DANGER,
+                    closable: true, // <-- Default value is false
+                    draggable: true, // <-- Default value is false
+                    btnCancelLabel: 'No, cancelar!', // <-- Default value is 'Cancel',
+                    btnOKLabel: 'Si, continuemos!', // <-- Default value is 'OK',
+                    btnOKClass: 'btn-primary',
+                    callback: function(result) {
+                        // result will be true if button was click, while it will be false if users close the dialog directly.
+                        if(result) {
+                            $("#reasignar-form").submit();
+                        }
+                    }
+                });
+            }
+        })(jQuery);
+    </script>
+{% endblock %}

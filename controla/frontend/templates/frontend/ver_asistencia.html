@@ -1,0 +1,26 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags %}
+{%  block title %}
+    <h2 class="main-title">Detalles de la asistencia del {{ object.fecha }}</h2>
+{% endblock %}
+{% block content %}
+
+    <h3>Proyecto: <strong>{{ object.proyecto }}</strong></h3>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th colspan="2">Estado de asistencia</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in object.items.all %}
+            <tr>
+                <td>{{ r.persona }}</td>
+                <td>{{ r.estado.codigo }}</td>
+                <td>{{ r.estado.situacion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

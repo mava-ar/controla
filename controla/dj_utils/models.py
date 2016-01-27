@@ -10,4 +10,3 @@ class BaseModel(models.Model):
                                       auto_now_add=True)
     modified_at = models.DateTimeField(verbose_name=u"Fecha de modificación",
                                        auto_now=True)
-
