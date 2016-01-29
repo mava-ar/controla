@@ -1,5 +1,5 @@
 {% extends "frontend/base.html" %}
-{%  load bootstrap3 compress %}
+{%  load bootstrap3 compress repl %}
 {% block navbar %}
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
         <div class="container">
@@ -17,8 +17,15 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="{% url 'index' %}">Inicio</a></li>
+
                     {% if request.user.cambia_personal %}
-                        <li><a href="{% url 'responsable_frontend:reasignar_personal' %}">Reasignar personal</a></li>
+                        {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
+                            <li><a href="{% url url1 %}">Reasignar personal</a></li>
+                        {% endwith %}
+
+                    {% endif %}
+                    {% if request.user.is_superuser or request.user.is_staff %}
+                        <li><a href="{% url 'admin:index' %}">Administración</a></li>
                     {% endif %}
                 </ul>
 

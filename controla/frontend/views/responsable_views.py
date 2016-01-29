@@ -11,11 +11,13 @@ from django.views.generic import TemplateView, CreateView, DetailView
 
 from frontend.forms import AltaAsistenciaForm, RegistroAsistenciaFormSet, ReasignarPersonalForm
 from dj_utils.views import AuthenticatedMixin
+from frontend.views.base import BaseReasignarPersonalView
+from frontend.views.mixins import ResponsableViewMixin
 from modelo.models import Proyecto, Persona, RegistroAsistencia, Asistencia
 
 
-class IndexProyect(AuthenticatedMixin, TemplateView):
-    template_name = "frontend/index.html"
+class IndexProyect(ResponsableViewMixin, TemplateView):
+    template_name = "frontend/index_proyectos.html"
 
     def get_context_data(self, **kwargs):
         data = super(IndexProyect, self).get_context_data(**kwargs)
@@ -29,7 +31,7 @@ class IndexProyect(AuthenticatedMixin, TemplateView):
         return data
 
 
-class AltaAsistenciaView(AuthenticatedMixin, CreateView):
+class AltaAsistenciaView(ResponsableViewMixin, CreateView):
     template_name = "frontend/alta_asistencia.html"
     form_class = AltaAsistenciaForm
 
@@ -41,7 +43,7 @@ class AltaAsistenciaView(AuthenticatedMixin, CreateView):
                                  "Mostrardo la asistencia para el día de la fecha.")
             # muestro la asistencia del día
             return HttpResponseRedirect(
-                    reverse_lazy('frontend:ver_asistencia',
+                    reverse_lazy('responsable_frontend:ver_asistencia',
                                  kwargs={'pk': asistencia[0].pk}))
         return super(AltaAsistenciaView, self).get(request, *args, **kwargs)
 
@@ -107,7 +109,7 @@ class AltaAsistenciaView(AuthenticatedMixin, CreateView):
             return reverse('responsable_frontend:index')
 
 
-class DetailAsistenciaView(AuthenticatedMixin, DetailView):
+class DetailAsistenciaView(ResponsableViewMixin, DetailView):
 
     model = Asistencia
     template_name = "frontend/ver_asistencia.html"
@@ -117,36 +119,10 @@ class DetailAsistenciaView(AuthenticatedMixin, DetailView):
         return Asistencia.objects.filter(proyecto_id__in=proyectos)
 
 
-class ReasignarPersonalView(AuthenticatedMixin, TemplateView):
-    template_name = "frontend/reasignar_personal.html"
+class ReasignarPersonalView(ResponsableViewMixin, BaseReasignarPersonalView):
 
-    def get_context_data(self, **kwargs):
-        data = super(ReasignarPersonalView, self).get_context_data(**kwargs)
-        if not 'form' in kwargs:
-            data["form"] = ReasignarPersonalForm()
-        return data
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        p_form = ReasignarPersonalForm(self.request.POST)
-
-        if p_form.is_valid():
-            return self.form_valid(p_form)
-        else:
-            return self.form_invalid(p_form)
-
-    def form_invalid(self, p_form):
-        return self.render_to_response(
-            self.get_context_data(form=p_form))
-
-    def form_valid(self, form):
-        persona = form.cleaned_data["persona"]
-        proyecto = form.cleaned_data["proyecto"]
-        persona.proyecto = proyecto
-        persona.save()
-        messages.add_message(self.request, messages.SUCCESS,
-                             "{} fue asignado a {} correctamente.".format(persona, proyecto))
-        return HttpResponseRedirect(reverse_lazy('responsable_frontend:reasignar_personal'))
+    def get_success_url(self):
+        return reverse_lazy('responsable_frontend:reasignar_personal')
 
 
 index = IndexProyect.as_view()
