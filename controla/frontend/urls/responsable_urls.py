@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from frontend import views
+from frontend.views import responsable_views as views
 
 
 urlpatterns = [

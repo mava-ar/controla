@@ -1,5 +1,5 @@
 {% extends "frontend/layout_base.html" %}
-{% load bootstrap3 frontend_tags %}
+{% load bootstrap3 compress frontend_tags %}
 {% block title %}
     <h2 class="main-title">Alta de asistencia diaria</h2>
 {% endblock %}
@@ -39,7 +39,7 @@
     </table>
 
 
-        <a class="btn btn-default" href="{% url 'frontend:index' %}">Volver</a> |
+        <a class="btn btn-default" href="{% url 'index' %}">Volver</a> |
         <input type="submit" value="Guardar" class="submit btn btn-primary" id="btn-submit"/>
     </form>
 
@@ -47,6 +47,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {% compress js %}
     <script type="text/javascript">
         (function($) {
             $(document).ready(function(){
@@ -54,29 +55,14 @@
 
                 $("#btn-submit").click(function(e){
                     e.preventDefault();
-                    showConfirm();
+                    showConfirm('Presentación de asistencia',
+                                'Está a punto de enviar la planilla de asistencia. Una vez enviada no se puede modificar.\n¿Desea continuar?',
+                                function() {
+                                    $("#asistencia_form").submit();
+                                });
                 });
             });
-            function showConfirm(){
-                BootstrapDialog.confirm({
-                    title: 'Presentación de asistencia',
-                    message: 'Está a punto de enviar la planilla de asistencia. Una vez enviada no se puede modificar.\n¿Desea continuar?',
-                    type: BootstrapDialog.TYPE_DANGER,
-                    closable: true, // <-- Default value is false
-                    draggable: true, // <-- Default value is false
-                    btnCancelLabel: 'No, cancelar!', // <-- Default value is 'Cancel',
-                    btnOKLabel: 'Si, continuemos!', // <-- Default value is 'OK',
-                    btnOKClass: 'btn-primary',
-                    callback: function(result) {
-                        // result will be true if button was click, while it will be false if users close the dialog directly.
-                        if(result) {
-                            $("#asistencia_form").submit();
-                        }
-                    }
-                });
-            }
         })(jQuery);
     </script>
-
-
+    {% endcompress %}
 {% endblock %}

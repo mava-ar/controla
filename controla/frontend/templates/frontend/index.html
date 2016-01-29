@@ -9,7 +9,7 @@
             <div class="container proyecto-list">
                 {% for f in proyectos %}
                 <div class="col-lg-6 col-md-9">
-                    <a href="{% url 'frontend:alta_asistencia' f.pk %}"
+                    <a href="{% url 'responsable_frontend:alta_asistencia' f.pk %}"
                        class="btn  btn-{% if f.pk in asistencia_dia %}success{% else %}primary{% endif %} btn-lg btn-block">
                         <div class="col-xs-2">
                             {% if f.pk in asistencia_dia %}

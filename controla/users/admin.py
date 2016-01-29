@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.models import Group as DjangoGroup
+from simple_history.admin import SimpleHistoryAdmin
 
 from users.models import User
 
@@ -11,7 +12,7 @@ class MyUserChangeForm(UserChangeForm):
         model = User
 
 
-class MyUserAdmin(UserAdmin):
+class MyUserAdmin(UserAdmin, SimpleHistoryAdmin):
     form = MyUserChangeForm
     fieldsets = (
         (None, {

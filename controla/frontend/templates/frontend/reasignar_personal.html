@@ -1,5 +1,5 @@
 {% extends "frontend/layout_base.html" %}
-{% load bootstrap3 frontend_tags %}
+{% load bootstrap3 frontend_tags compress %}
 {%  block title %}
     <h2 class="main-title">Reasignación de personal</h2>
 {% endblock %}
@@ -29,6 +29,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {% compress js %}
     <script type="text/javascript">
         (function($){
 
@@ -36,28 +37,16 @@
             $(document).ready(function(){
                 $("#btn-submit").click(function(e){
                     e.preventDefault();
-                    showConfirm();
+                    showConfirm(
+                            'Reasignación de personal',
+                            'Está a punto de cambiar de proyecto a la persona seleccionada. ¿Desea continuar?',
+                            function(){ $("#reasignar-form").submit(); }
+                    );
                 });
                 $("#id_proyecto").chosen({'search_contains':true});
             });
-            function showConfirm(){
-                BootstrapDialog.confirm({
-                    title: 'Reasignación de personal',
-                    message: 'Está a punto de cambiar de proyecto a la persona seleccionada. ¿Desea continuar?',
-                    type: BootstrapDialog.TYPE_DANGER,
-                    closable: true, // <-- Default value is false
-                    draggable: true, // <-- Default value is false
-                    btnCancelLabel: 'No, cancelar!', // <-- Default value is 'Cancel',
-                    btnOKLabel: 'Si, continuemos!', // <-- Default value is 'OK',
-                    btnOKClass: 'btn-primary',
-                    callback: function(result) {
-                        // result will be true if button was click, while it will be false if users close the dialog directly.
-                        if(result) {
-                            $("#reasignar-form").submit();
-                        }
-                    }
-                });
-            }
+
         })(jQuery);
     </script>
+    {% endcompress %}
 {% endblock %}

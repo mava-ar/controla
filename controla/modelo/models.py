@@ -1,6 +1,10 @@
 from django.db import models
+from django.db.models.fields import related
 from django.conf import settings
+from simple_history.models import HistoricalRecords
+
 from dj_utils.models import BaseModel
+
 
 
 class Estado(BaseModel):
@@ -12,6 +16,7 @@ class Estado(BaseModel):
     codigo = models.CharField("código", max_length=5, unique=True)
     observaciones = models.CharField("observaciones", max_length=255,
                                      blank=True, null=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "estado"
@@ -30,6 +35,7 @@ class Proyecto(BaseModel):
     """
     nombre = models.CharField("nombre", max_length=255, unique=True)
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "proyecto"
@@ -54,6 +60,7 @@ class Responsable(BaseModel):
     """
     persona = models.ForeignKey("Persona", verbose_name="persona", related_name="responsable_rel", null=True)
     proyecto = models.OneToOneField(Proyecto, verbose_name="proyecto", related_name="responsable_rel", null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return "{} responsable de {}".format(
@@ -72,6 +79,7 @@ class CCT(BaseModel):
 
     """
     nombre = models.CharField("nombre", max_length=255, unique=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "CCT"
@@ -100,6 +108,7 @@ class Persona(BaseModel):
     usuario = models.ForeignKey('users.User', verbose_name="Usuario", null=True, blank=True, related_name="persona",
                                 help_text="Al asociar un usuario a la persona, este puede ingresar al sistema.")
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "persona"
@@ -127,6 +136,7 @@ class Asistencia(BaseModel):
     nombre_proyecto = models.CharField(
         "Nombre del proyecto", max_length=255,
         help_text="Se completará automaticamente con el nombre del proyecto seleccionado.")
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "asistencia"
@@ -138,7 +148,11 @@ class Asistencia(BaseModel):
 
     def save(self, *args, **kwargs):
         self.nombre_proyecto = self.proyecto.nombre
-        self.nombre_responsable = "{}".format(self.proyecto.responsable_rel.persona)
+        try:
+            if not self.nombre_responsable:
+                self.nombre_responsable = "{}".format(self.proyecto.responsable_rel.persona)
+        except:
+            pass
         super(Asistencia, self).save(*args, **kwargs)
 
     @property
@@ -158,6 +172,9 @@ class RegistroAsistencia(BaseModel):
     codigo_estado = models.CharField(
         "Código", max_length=5, help_text="Se establecerá automaticamente con "
                                           "el código del estado seleccionado.")
+    observaciones = models.CharField("observaciones", max_length=255,
+                                     blank=True, null=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "registro de asistencia"
@@ -170,4 +187,3 @@ class RegistroAsistencia(BaseModel):
     def save(self, *args, **kwargs):
         self.codigo_estado = self.estado.codigo
         super(RegistroAsistencia, self).save(*args, **kwargs)
-

@@ -7,6 +7,9 @@ $color-bg-primary: #dbdbdb;
 html, body {
   height: 100%;
 }
+body.auth {
+  background: url(../img/bg2.jpg) no-repeat center / cover;
+}
 
 .main-wrapper {
   padding-top: 60px;
@@ -28,13 +31,23 @@ footer {
   border-bottom: 1px solid #DDD;
 }
 
+.content-login {
+  padding-top: 10%;
+  position: absolute;
+  bottom: 10%;
+  .panel {
+    padding-top: 20px;
+    @include box-shadow(5px 5px 16px #333);
+  }
+}
+
 .proyecto-list {
   i.fa {
     font-size: 3em;
   }
   .btn-block{
     display: inline-block;
-    margin-top: 3px;
+    margin-top: 10px;
   }
   h5 {
     color: #eee;

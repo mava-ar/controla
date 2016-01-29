@@ -1,5 +1,6 @@
 import csv
 import os
+from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
 from modelo.models import Estado
@@ -24,10 +25,8 @@ class Command(BaseCommand):
         dataReader = csv.reader(open(options["filename"]), delimiter=',', quotechar='"')
         for row in dataReader:
             if row[0] != 'SITUACIONES': # ignoramos la primera línea del archivo CSV
-                estado, created = Estado.objects.get_or_create(codigo=row[1])
-                if created:
-                    self.guardar_estado(estado, row)
-                else:
+                try:
+                    estado = Estado.objects.get(codigo=row[1])
                     if estado.situacion == row[0] and estado.observaciones == row[2]:
                         # está todo igual, continuo
                         continue
@@ -37,11 +36,16 @@ class Command(BaseCommand):
                                                   estado.codigo, estado, estado.observaciones, row[1], row[0], row[2]))
                         if es_continuar(raw_value):
                             self.guardar_estado(estado, row)
+                except Estado.DoesNotExist:
+                    self.guardar_estado(None, row)
 
         self.stdout.write("Se han creado o actualizado {} estados en el sistema.".format(self.c_new))
 
     def guardar_estado(self, estado, row):
+        if estado is None:
+            estado = Estado(codigo=row[1])
         estado.situacion = row[0]
         estado.observaciones = row[2]
+        estado._history_date = datetime.now()
         estado.save()
         self.c_new += 1

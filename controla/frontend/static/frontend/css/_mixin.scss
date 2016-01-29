@@ -119,3 +119,15 @@
   -ms-transform:rotate($var);
   transform: rotate($var);
 }
+
+@mixin radius ($vars){
+  -webkit-border-radius: $vars;
+  -moz-border-radius: $vars;
+  border-radius: $vars;
+}
+
+@mixin box-shadow ($vars) {
+  -webkit-box-shadow: $vars;
+  -moz-box-shadow: $vars;
+  box-shadow: $vars;
+}

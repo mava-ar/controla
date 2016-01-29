@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
-from modelo.models import Estado, CCT, Persona, Proyecto, Asistencia, RegistroAsistencia
+from modelo.models import Estado, CCT, Persona, Proyecto, Asistencia, RegistroAsistencia, Responsable
 
 
 class Command(BaseCommand):
@@ -22,11 +22,15 @@ class Command(BaseCommand):
         # make sure file path resolves
         if not os.path.isfile(options['filename']):
             raise CommandError("El archivo especificado no existe.")
-        import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
         dataReader = csv.reader(open(options["filename"]), delimiter=',', quotechar='"')
         for row in dataReader:
             if row[0] != 'LEGAJO': # ignoramos la primera línea del archivo CSV
+                self.fecha = datetime.strptime(row[7], "%d/%m/%Y")
+                if not isinstance(self.fecha, datetime):
+                    self.stdout.write("Fecha en formato erroneo. Saltando fila")
+                    self.fecha = None
+                    continue
                 pers_filt = Persona.objects.filter(legajo=row[0])
                 proyecto = None
                 if pers_filt:
@@ -34,33 +38,36 @@ class Command(BaseCommand):
                 else:
                     # Si no existe la persona, quizás no existan las entidades
                     # relacionadas
-                    cct, _ = CCT.objects.get_or_create(nombre=row[4])
-                    proyecto, _ = Proyecto.objects.get_or_create(nombre=row[5])
-                    proyecto = self.update_proyecto(proyecto, row)
+                    try:
+                        cct = CCT.objects.get(nombre=row[4])
+                    except CCT.DoesNotExist:
+                        cct = CCT(nombre=row[4])
+                        cct._history_date = self.fecha
+                        cct.save()
+                    proyecto = self.get_proyecto_or_default(row[5], row)
                     persona = self.guardar_persona(row, cct, proyecto)
                 # teniendo las entidades ya creadas, realizamos el
                 # registro
-                fecha = datetime.strptime(row[7], "%d/%m/%Y")
-                if not isinstance(fecha, datetime):
-                    self.stdout.write("Fecha en formato erroneo. Saltando fila")
-                else:
-                    if proyecto is None:
-                        proyecto, _ = Proyecto.objects.get_or_create(nombre=row[5])
-                        proyecto = self.update_proyecto(proyecto, row)
-                    asistencia, is_new = Asistencia.objects.get_or_create(fecha=fecha, proyecto=proyecto)
-                    if is_new:
-                        asistencia.nombre_proyecto = proyecto.nombre
-                        asistencia.nombre_responsable = str(proyecto.responsable)
-                        asistencia.save()
-                        self.a_new += 1
-                    if not RegistroAsistencia.objects.filter(
-                        asistencia=asistencia, persona=persona).exists():
-                        registro = RegistroAsistencia(asistencia=asistencia, persona=persona)
-                        estado, _ = Estado.objects.get_or_create(codigo=row[8])
-                        registro.estado = estado
-                        registro.codigo_estado = row[8]
-                        registro.save()
-                        self.r_new += 1
+
+                if proyecto is None:
+                    proyecto = self.get_proyecto_or_default(row[5], row)
+                try:
+                    asistencia = Asistencia.objects.get(fecha=self.fecha, proyecto=proyecto)
+                except Asistencia.DoesNotExist:
+                    asistencia = Asistencia(fecha=self.fecha, proyecto=proyecto, nombre_responsable=row[6])
+                    asistencia._history_date = self.fecha
+                    asistencia.save()
+                    self.a_new += 1
+                if not RegistroAsistencia.objects.filter(
+                    asistencia=asistencia, persona=persona).exists():
+                    registro = RegistroAsistencia(asistencia=asistencia, persona=persona)
+                    estado = self.get_estado_or_default(codigo=row[8])
+                    registro.estado = estado
+                    if estado.codigo != row[8]:
+                        registro.observaciones = "Código original en la planilla {}".format(row[8])
+                    registro._history_date = self.fecha
+                    registro.save()
+                    self.r_new += 1
 
         self.stdout.write("Se han creado o actualizado {} persona, {} "
                           "asistencias con un total de {} registros.".format(
@@ -74,16 +81,46 @@ class Command(BaseCommand):
         persona.cuil = row[3]
         persona.cct = cct
         persona.proyecto = proyecto
+        persona._history_date = self.fecha
         persona.save()
         self.p_new += 1
         return persona
 
-    def update_proyecto(self, proyecto, row):
+    def buscar_responsable(self, proyecto, row):
         nom_list = row[6].split(' ')
-        responsable = Persona.objects.filter(
+        persona = Persona.objects.filter(
             apellido__in=nom_list, nombre__in=nom_list)
-        if responsable:
-            proyecto.responsable = responsable[0]
-            proyecto.save()
-        return proyecto
+        if persona:
+            try:
+                responsable = Responsable.objects.get(proyecto=proyecto)
+                if responsable.persona != persona[0]:
+                    responsable.persona = persona[0]
+                    responsable._history_date = self.fecha
+                    responsable.save()
+            except Responsable.DoesNotExist:
+                responsable = Responsable(persona=persona[0], proyecto=proyecto)
+                responsable._history_date = self.fecha
+                responsable.save()
 
+    def get_proyecto_or_default(self, nombre, row):
+        if nombre.strip() == '':
+            p = Proyecto.objects.get(nombre="Sin proyecto")
+            return p
+        else:
+
+            try:
+                p = Proyecto.objects.get(nombre=nombre)
+            except Proyecto.DoesNotExist:
+                p = Proyecto(nombre=nombre)
+                p._history_date = self.fecha
+                p.save()
+            self.buscar_responsable(p, row)
+            return p
+
+    def get_estado_or_default(self, codigo):
+        try:
+            est = Estado.objects.get(codigo=codigo)
+            return est
+        except Estado.DoesNotExist:
+            est = Estado.objects.get(codigo="SD")
+            return est

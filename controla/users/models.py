@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from simple_history import register
 
 from dj_utils.models import BaseModel
 
@@ -19,3 +20,5 @@ class User(AbstractUser, BaseModel):
                                           help_text="Al l habilitar esta opción (con rol RESPONSABLE), el usuario "
                                                     "puede cambiar el proyecto al cuál está asignado una persona.")
 
+
+register(User)

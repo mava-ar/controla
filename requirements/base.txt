@@ -1,6 +1,7 @@
 Django<1.9
 mysqlclient
 XlsxWriter
+django-simple-history
 
 # frontend
 django-bower>=5.0.4

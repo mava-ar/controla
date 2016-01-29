@@ -25,6 +25,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'django_admin_bootstrapped',
     'autocomplete_light',
+    'frontend',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,10 +38,10 @@ INSTALLED_APPS = (
     'djangobower',
     'bootstrap3',
     'compressor',
+    'simple_history',
 
     'dj_utils',
     'modelo',
-    'frontend',
     'users',
 )
 
@@ -52,6 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 ROOT_URLCONF = 'controla.urls'
@@ -77,14 +80,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'controla.wsgi.application'
 
+LOGIN_URL = '/login/'
 
+LOGIN_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'es-ar'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Argentina/Mendoza'
 
 USE_I18N = True
 
@@ -153,6 +158,7 @@ PIPELINE = {
                 'bootstrap-sass/assets/javascripts/bootstrap.js',
                 'bootstrap3-dialog/dist/js/bootstrap-dialog.js',
                 'chosen/chosen.jquery.min.js',
+                'frontend/js/controla.js',
             ),
             'output_filename': 'js/base_js.js',
         },
@@ -197,4 +203,4 @@ BOWER_INSTALLED_APPS = (
     'chosen#1.4.2'
 )
 
-ESTADO_DEFAULT = 5  # AUSENTE SIN AVISO
+ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO

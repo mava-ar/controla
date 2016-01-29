@@ -1,16 +1,17 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import Estado, Proyecto, CCT, Persona, Asistencia, RegistroAsistencia, Responsable
 
 
 @admin.register(Estado)
-class EstadoAdmin(admin.ModelAdmin):
+class EstadoAdmin(SimpleHistoryAdmin):
     list_display = ('situacion', 'codigo', 'observaciones', )
     list_display_links = ('codigo', )
 
 
 @admin.register(Proyecto)
-class ProyectoAdmin(admin.ModelAdmin):
+class ProyectoAdmin(SimpleHistoryAdmin):
     list_display = ('nombre', 'total_personas', 'responsable', 'activo_status')
 
     search_fields = ('nombre', )
@@ -28,26 +29,26 @@ class ProyectoAdmin(admin.ModelAdmin):
 
 
 @admin.register(CCT)
-class CCTAdmin(admin.ModelAdmin):
+class CCTAdmin(SimpleHistoryAdmin):
     list_display = ('nombre', 'total_personas', )
 
 
 @admin.register(Persona)
-class PersonaAdmin(admin.ModelAdmin):
+class PersonaAdmin(SimpleHistoryAdmin):
     list_display = ('apellido', 'nombre', 'cuil', 'cct', 'proyecto', )
     search_fields = ('apellido', 'nombre',)
     list_filter = ('cct', 'proyecto', )
 
 
 class RegistroAsistenciaInlineAdmin(admin.TabularInline):
-    extra = 1
+    extra = 0
     can_delete = False
     model = RegistroAsistencia
     fields = ('persona', 'estado', )
 
 
 @admin.register(Asistencia)
-class AsistenciaAdmin(admin.ModelAdmin):
+class AsistenciaAdmin(SimpleHistoryAdmin):
     list_display = ("proyecto", "fecha", "total_items", )
     list_filter = ("proyecto", 'fecha', )
     inlines = [RegistroAsistenciaInlineAdmin, ]
@@ -55,6 +56,6 @@ class AsistenciaAdmin(admin.ModelAdmin):
 
 
 @admin.register(Responsable)
-class ResponsableAdmin(admin.ModelAdmin):
+class ResponsableAdmin(SimpleHistoryAdmin):
     list_display = ("proyecto", "persona", )
     list_filter = ("proyecto", )
