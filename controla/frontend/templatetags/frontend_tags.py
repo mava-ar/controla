@@ -1,5 +1,6 @@
-import json
+
 from django.template.defaulttags import register
+from frontend.stats import sort_dict
 
 
 @register.filter
@@ -14,6 +15,6 @@ def get_persona(personas, form):
 
 
 @register.filter
-def generate_data(datas):
-    data = json.dumps(datas)
-    return data
+def order_fecha_desc(datas):
+    datas.sort(reverse=True)
+    return datas

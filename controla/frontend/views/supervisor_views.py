@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse_lazy
 from frontend.views.mixins import SupervisorViewMixin
 from frontend.views.base import BaseReasignarPersonalView
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
-                            porcentaje_asistencia_persona, evolucion_registros)
+                            porcentaje_asistencia_persona, evolucion_registros_asistencia)
 
 
 class IndexProyect(SupervisorViewMixin, TemplateView):
@@ -16,9 +16,7 @@ class IndexProyect(SupervisorViewMixin, TemplateView):
         data["perc_no_ocioso"] = porcentaje_actividad()
         data["perc_asis_persona"] = porcentaje_asistencia_persona()
         hoy = datetime.now()
-        data["graf_evolucion"] = evolucion_registros(hoy + timedelta(-7), hoy)
-        data["fecha_desde"] = hoy + timedelta(-7)
-        data["fecha_hasta"] = hoy
+        data["graf_evolucion"], data["table_evolucion"] = evolucion_registros_asistencia(hoy + timedelta(-7), hoy)
         return data
 
 class ReasignarPersonalView(SupervisorViewMixin, BaseReasignarPersonalView):

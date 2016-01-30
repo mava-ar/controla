@@ -6,7 +6,7 @@
 {% block content %}
     <h2 class="main-title">Control de ausentismo</h2>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-sm-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Total de toma de asistencia (Proyecto)
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-sm-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Total de toma de asistencia (Personas)
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-sm-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Porcentaje de personal activo
@@ -50,13 +50,34 @@
         </div>
     </div>
     <div class="row">
+
         <div class="col-sm-12">
-            <div class="panel panel-primary">
+            <div class="panel panel-success">
                 <div class="panel-heading">
-                    Evolución de asistencias entre {{ fecha_desde|date:"d/m/Y" }} hasta {{ fecha_hasta|date:"d/m/Y" }}
+                    Evolución de asistencias de los últimos 7 días
                 </div>
                 <div class="panel-body">
-                    <div id="chart" class="">
+                    <div class="col-sm-6">
+                        <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Presentes</th>
+                                <th>Ausentes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for x in table_evolucion|order_fecha_desc %}
+                        <tr>
+                            <td>{{ x.0 }}</td>
+                            <td>{{ x.1 }}</td>
+                            <td>{{ x.2 }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                    <div id="chart" class="col-sm-6">
                         <svg></svg>
                     </div>
                 </div>
@@ -89,15 +110,14 @@
 
                 nv.addGraph(function() {
                     var chart = nv.models.lineChart()
-                        .options({
-                            margin: {left: 50, bottom: 100},
-                            showXAxis: true,
-                            showYAxis: true,
-                            transitionDuration: 500,
-                            noData: "No hay datos para el rango de fechas seleccionada.",
-                        })
-                        .useInteractiveGuideline(true)
-                        ;
+                            .useInteractiveGuideline(true)
+                            .options({
+                                margin: {left: 50, bottom: 100},
+                                showXAxis: true,
+                                showYAxis: true,
+                                transitionDuration: 500,
+                                noData: "No hay datos para el rango de fechas seleccionada.",
+                            });
 
                     chart.xAxis
                             .axisLabel("Días")
