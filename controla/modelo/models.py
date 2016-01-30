@@ -3,11 +3,11 @@ from django.db.models.fields import related
 from django.conf import settings
 from simple_history.models import HistoricalRecords
 
-from dj_utils.models import BaseModel
+from dj_utils.models import BaseModel, BaseModelWithHistory
+from .managers import ProyectoManager, PersonaManager
 
 
-
-class Estado(BaseModel):
+class Estado(BaseModelWithHistory):
     """
     Representa los posibles valores para la asistencia de cada persona.
 
@@ -16,7 +16,11 @@ class Estado(BaseModel):
     codigo = models.CharField("código", max_length=5, unique=True)
     observaciones = models.CharField("observaciones", max_length=255,
                                      blank=True, null=True)
+    no_ocioso = models.BooleanField("No está ocioso", default=False,
+                                    help_text="Seleccione esta opción para indicar "
+                                              "que el estado no implica ociosidad por parte del empleado")
     history = HistoricalRecords()
+
 
     class Meta:
         verbose_name = "estado"
@@ -24,10 +28,10 @@ class Estado(BaseModel):
         ordering = ('situacion', )
 
     def __str__(self):
-        return "{} ({})".format(self.codigo, self.situacion)
+        return "{} - {}".format(self.codigo, self.situacion)
 
 
-class Proyecto(BaseModel):
+class Proyecto(BaseModelWithHistory):
     """
     Representa un proyecto de la empresa o Centro de Costo. Un persona es
     responsable de la asistencia.
@@ -36,6 +40,9 @@ class Proyecto(BaseModel):
     nombre = models.CharField("nombre", max_length=255, unique=True)
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
     history = HistoricalRecords()
+
+    objects = ProyectoManager()
+    all_proyects = models.Manager()
 
     class Meta:
         verbose_name = "proyecto"
@@ -53,7 +60,7 @@ class Proyecto(BaseModel):
         return self.fecha_baja is None
 
 
-class Responsable(BaseModel):
+class Responsable(BaseModelWithHistory):
     """
     Representa al responsable del proyecto, junto a sus configuraciones.
 
@@ -73,7 +80,7 @@ class Responsable(BaseModel):
         unique_together = ('persona', 'proyecto', )
 
 
-class CCT(BaseModel):
+class CCT(BaseModelWithHistory):
     """
     Representa un Contrato Colectivo de Trabajo.
 
@@ -94,7 +101,7 @@ class CCT(BaseModel):
 
 
 
-class Persona(BaseModel):
+class Persona(BaseModelWithHistory):
     """
     Representa una persona que trabaja en la empresa.
     """
@@ -110,6 +117,9 @@ class Persona(BaseModel):
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
     history = HistoricalRecords()
 
+    objects = PersonaManager()
+    all_persons = models.Manager()
+
     class Meta:
         verbose_name = "persona"
         verbose_name_plural = "personas"
@@ -123,7 +133,7 @@ class Persona(BaseModel):
         return self.fecha_baja is None
 
 
-class Asistencia(BaseModel):
+class Asistencia(BaseModelWithHistory):
     """
     Representa la asistencia para un día y proyecto específico.
 
@@ -160,7 +170,7 @@ class Asistencia(BaseModel):
         return "{} items".format(self.items.count())
 
 
-class RegistroAsistencia(BaseModel):
+class RegistroAsistencia(BaseModelWithHistory):
     """
     Representa el dato sobre la asistencia de una persona para una
     Asistencia en particular.

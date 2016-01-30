@@ -4,3 +4,4 @@ django-extensions==1.5.9
 django-debug-toolbar==1.4
 ipdb==0.8.1
 Werkzeug==0.11.2
+django-template-repl

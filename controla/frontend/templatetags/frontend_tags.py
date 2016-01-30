@@ -1,3 +1,4 @@
+import json
 from django.template.defaulttags import register
 
 
@@ -10,3 +11,9 @@ def get_persona(personas, form):
             return "{}".format(form.cleaned_data["persona"])
     except:
         return ""
+
+
+@register.filter
+def generate_data(datas):
+    data = json.dumps(datas)
+    return data

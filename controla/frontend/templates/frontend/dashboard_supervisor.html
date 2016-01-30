@@ -1,6 +1,125 @@
 {% extends "frontend/layout_base.html" %}
-{% load bootstrap3 frontend_tags %}
-
+{% load bootstrap3 frontend_tags compress pipeline static %}
+{% block extra_css %}
+    <link media="all" href="{% static "nvd3/build/nv.d3.min.css" %}" type="text/css" rel="stylesheet" />
+{% endblock %}
 {% block content %}
+    <h2 class="main-title">Control de ausentismo</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Total de toma de asistencia (Proyecto)
+                </div>
+                <div class="panel-body">
+                    <h3>{{ perc_asis_proyecto }}% de planillas enviadas</h3>
+                    <div class="progress progress-striped active">
+                    <div class="progress-bar" style="width: {{ perc_asis_proyecto }}%"></div>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Total de toma de asistencia (Personas)
+                </div>
+                <div class="panel-body">
+                    <h3>{{ perc_asis_persona }}% del personal registrado</h3>
+                    <div class="progress progress-striped active">
+                    <div class="progress-bar" style="width: {{ perc_asis_persona }}%"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Porcentaje de personal activo
+                </div>
+                <div class="panel-body">
+                    <h3>{{ perc_no_ocioso }}% de personas no ociosas</h3>
+                    <div class="progress progress-striped active">
+                    <div class="progress-bar" style="width: {{ perc_no_ocioso }}%"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Evolución de asistencias entre {{ fecha_desde|date:"d/m/Y" }} hasta {{ fecha_hasta|date:"d/m/Y" }}
+                </div>
+                <div class="panel-body">
+                    <div id="chart" class="">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block extra_js %}
+    {% compress js %}
+        {% javascript 'graphics_js' %}
+        <script type="text/javascript" >
+
+            $(document).ready(function() {
+
+                var datus = [
+                    {% for dat in graf_evolucion %}
+                        {
+                            key: "{{ dat.key }}",
+                            values: [
+                                {% for val in dat.values %}
+                                    {x: new Date("{{ val.x }}"), y: {{ val.y }}}
+                                    {% if not forloop.last %},{% endif %}
+                                {%  endfor %}
+                            ]
+                        }
+                        {% if not forloop.last %},{% endif %}
+                    {%  endfor %}
+                ];
+
+                nv.addGraph(function() {
+                    var chart = nv.models.lineChart()
+                        .options({
+                            margin: {left: 50, bottom: 100},
+                            showXAxis: true,
+                            showYAxis: true,
+                            transitionDuration: 500,
+                            noData: "No hay datos para el rango de fechas seleccionada.",
+                        })
+                        .useInteractiveGuideline(true)
+                        ;
+
+                    chart.xAxis
+                            .axisLabel("Días")
+                            .rotateLabels(-45)
+                            .tickFormat(function (d) {
+                                return d3.time.format('%Y-%m-%d')(new Date(d))
+                            });
+
+                    chart.yAxis.tickFormat(d3.format('d'));
+
+                    d3.select('#chart svg')
+                        .datum(datus)
+                        .transition().duration(500)
+                        .call(chart)
+                        ;
+
+                    nv.utils.windowResize(chart.update);
+
+                    return chart;
+                });
+            });
+
+</script>
+    {% endcompress %}
 {% endblock %}

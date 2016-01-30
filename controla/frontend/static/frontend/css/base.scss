@@ -32,9 +32,9 @@ footer {
 }
 
 .content-login {
-  padding-top: 10%;
   position: absolute;
-  bottom: 10%;
+  bottom: 25%;
+  left: 10%;
   .panel {
     padding-top: 20px;
     @include box-shadow(5px 5px 16px #333);
@@ -59,4 +59,10 @@ footer {
   .autocomplete-light-widget {
     display: block;
   }
+}
+
+
+#chart svg {
+  height: 500px;
+  width: 100%;
 }

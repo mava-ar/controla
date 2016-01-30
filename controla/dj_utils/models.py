@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 
 
@@ -21,7 +22,10 @@ class BaseModelWithHistory(BaseModel):
 
     @property
     def _history_date(self):
-        return self.__history_date
+        if self.__history_date:
+            return self.__history_date
+        else:
+            return datetime.now()
 
     @_history_date.setter
     def _history_date(self, value):
