@@ -16,6 +16,11 @@ class Command(BaseCommand):
         parser.add_argument('filename', type=str)
 
     def handle(self, *args, **options):
+
+
+        # copiar responsable proyecto en un campo nuevo nombre_responsable_ori
+        # cuando se busca responsable, buscar por apellido y algun nombre
+
         if options['filename'] == None:
             raise CommandError("Debe especificar la ruta al archivo CSV.")
 

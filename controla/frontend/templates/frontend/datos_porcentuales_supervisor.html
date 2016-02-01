@@ -1,0 +1,50 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress frontend_tags%}
+{% block active_percentual %}active{% endblock %}
+{% block total_report %}<span class="text-success">Mostrando registros de {{ table|length|add:"-1" }} días.</span>{% endblock %}
+{% block btn_export %}
+    <a class="btn btn-info" data-actions="export" data-url="{% url 'supervisor_frontend:export_porcentual' %}">Exportar</a>
+{%  endblock %}
+{% block data_table %}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>Totales</h4>
+        </div>
+        <div class="panel-body">
+            {% for k, v in summary.items %}
+            <div class="col-xs-4 col-sm-3 col-md-2">
+                <h4>{{ k }}: <strong>{{ v|percentage:"3" }}%</strong></h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <table class="table table-bordered table-striped table-hover" id="datatables">
+        {% for x in table %}
+            {% if forloop.first %}
+                <thead>
+                    <tr>
+                    {% for y in x %}
+                        <td>{{ y }}</td>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% elif forloop.last %}
+
+                    </tbody>
+                {% else %}
+                    <tr {% if x.1 %}class="weekend"{% endif %}>
+                    {% for y in x %}
+
+                        {% if forloop.first %}
+                            <td>{{ y|date:"d/m/Y" }}</td>
+                        {% elif forloop.counter0 > 1 %}
+                            <td>{{ y|percentage }}</td>
+                        {% endif %}
+
+                    {%  endfor %}
+                    </tr>
+                {% endif %}
+        {% endfor %}
+    </table>
+{%  endblock %}

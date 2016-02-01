@@ -26,6 +26,10 @@ footer {
   text-align: center;
 }
 
+form {
+  margin-bottom: 20px;
+}
+
 .main-title {
   font-size: 3em;
   border-bottom: 1px solid #DDD;
@@ -66,4 +70,11 @@ footer {
 #chart svg {
   height: 350px;
   width: 100%;
+}
+
+#datatables {
+  color: #111;
+  .weekend {
+    background-color: #d59392;
+  }
 }

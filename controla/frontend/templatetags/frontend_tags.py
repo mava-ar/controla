@@ -18,3 +18,11 @@ def get_persona(personas, form):
 def order_fecha_desc(datas):
     datas.sort(reverse=True)
     return datas
+
+
+@register.filter
+def percentage(data, num_decimal=1):
+    try:
+        return '{0:.{prec}f}'.format(data, prec=num_decimal)
+    except:
+        return ''

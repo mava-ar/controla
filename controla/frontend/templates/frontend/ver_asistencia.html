@@ -1,5 +1,6 @@
 {% extends "frontend/layout_base.html" %}
 {% load bootstrap3 frontend_tags %}
+{% block wide_class %}container{% endblock %}
 {%  block title %}
     <h2 class="main-title">Detalles de la asistencia del {{ object.fecha }}</h2>
 {% endblock %}

@@ -1,10 +1,7 @@
-{% extends "frontend/layout_base.html" %}
+{% extends "frontend/base_supervisor.html" %}
 {% load bootstrap3 frontend_tags compress pipeline static %}
-{% block extra_css %}
-    <link media="all" href="{% static "nvd3/build/nv.d3.min.css" %}" type="text/css" rel="stylesheet" />
-{% endblock %}
-{% block content %}
-    <h2 class="main-title">Control de ausentismo</h2>
+{% block active_index %}active{% endblock %}
+{% block supervisor_content %}
     <div class="row">
         <div class="col-sm-4">
             <div class="panel panel-primary">
@@ -57,34 +54,33 @@
                     Evolución de asistencias de los últimos 7 días
                 </div>
                 <div class="panel-body">
-                    <div class="col-sm-6">
-                        <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Presentes</th>
-                                <th>Ausentes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for x in table_evolucion|order_fecha_desc %}
-                        <tr>
-                            <td>{{ x.0 }}</td>
-                            <td>{{ x.1 }}</td>
-                            <td>{{ x.2 }}</td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    </div>
                     <div id="chart" class="col-sm-6">
                         <svg></svg>
+                    </div>
+                    <div class="col-sm-6">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Presentes</th>
+                                    <th>Ausentes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for x in table_evolucion|order_fecha_desc %}
+                                <tr>
+                                    <td>{{ x.0 }}</td>
+                                    <td>{{ x.1 }}</td>
+                                    <td>{{ x.2 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
 {% block extra_js %}
     {% compress js %}

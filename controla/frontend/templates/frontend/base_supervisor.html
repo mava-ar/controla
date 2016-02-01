@@ -1,0 +1,16 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags compress pipeline static %}
+
+{% block extra_css %}
+    <link media="all" href="{% static "nvd3/build/nv.d3.min.css" %}" type="text/css" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+    <ul class="nav nav-pills">
+      <li class="{% block active_index %}{% endblock %}"><a href="{% url 'index' %}">Panel</a></li>
+      <li class="{% block active_percentual %}{% endblock %}"><a href="{% url 'supervisor_frontend:datos_porcentuales' %}">Datos porcentuales</a></li>
+      <li class="{% block active_x_persona %}{% endblock %}"><a href="{% url 'supervisor_frontend:asistencia_persona' %}">Asistencia por persona</a></li>
+      
+    </ul>
+    <h2 class="main-title">Control de ausentismo</h2>
+    {% block supervisor_content %}{% endblock %}
+{% endblock %}

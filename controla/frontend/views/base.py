@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.views import logout as django_logout
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -7,7 +8,8 @@ from django.http import HttpResponseRedirect
 from dj_utils.views import AuthenticatedMixin
 from users.models import User
 from frontend.forms import ReasignarPersonalForm
-
+from dj_utils.dates import get_30_days, format_date
+from .mixins import SupervisorViewMixin
 
 class RedirectRolView(AuthenticatedMixin, RedirectView):
     """
@@ -60,6 +62,28 @@ class BaseReasignarPersonalView(AuthenticatedMixin, TemplateView):
 
     def get_success_url(self):
         raise NotImplemented
+
+
+class BaseReportView(SupervisorViewMixin):
+    def get_context_data(self, **kwargs):
+        data = super(BaseReportView, self).get_context_data(**kwargs)
+
+        try:
+            data["fecha_desde"] = datetime.strptime(self.request.GET.get("fecha_desde"), '%d/%m/%Y')
+            data["fecha_hasta"] = datetime.strptime(self.request.GET.get("fecha_hasta"), '%d/%m/%Y')
+        except:
+            start, end = get_30_days()
+            data["fecha_desde"] = start
+            data["fecha_hasta"] = end
+        return data
+
+    def dispatch(self, request, *args, **kwargs):
+        if not 'fecha_desde' in request.GET:
+            start, stop = get_30_days()
+            return HttpResponseRedirect('%s?fecha_desde=%s&fecha_hasta=%s' % (
+                request.path, format_date(start), format_date(stop)
+            ))
+        return super(BaseReportView, self).dispatch(request, *args, **kwargs)
 
 
 def logout(request):

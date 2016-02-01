@@ -135,6 +135,8 @@ PIPELINE = {
                 'bootstrap3-dialog/dist/css/bootstrap-dialog.css',
                 'font-awesome/css/font-awesome.min.css',
                 'frontend/css/theme.bootstrap.min.css',
+                'datatables.net-bs/css/dataTables.bootstrap.css',
+                'bootstrap-datepicker/dist/css/bootstrap-datepicker3.css',
                 'frontend/css/base.scss',
                 'chosen/chosen.min.css',
             ),
@@ -162,13 +164,15 @@ PIPELINE = {
             ),
             'output_filename': 'js/base_js.js',
         },
-        # 'plugins_js': {
-            # 'source_filenames': (
-                # 'datatables/media/js/jquery.dataTables.js',
-                # 'datatables/media/js/dataTables.bootstrap.js',
-            # ),
-            # 'output_filename': 'js/plugins.js',
-        # },
+        'plugins_js': {
+            'source_filenames': (
+                'datatables.net/js/jquery.dataTables.js',
+                'datatables.net-bs/js/dataTables.bootstrap.js',
+                'bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
+                'bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js',
+            ),
+            'output_filename': 'js/plugins.js',
+        },
         'graphics_js': {
             'source_filenames': (
                 "d3/d3.min.js",
@@ -200,7 +204,11 @@ BOWER_INSTALLED_APPS = (
     'nvd3#1.7.1',
     'fontawesome#4.5.0',
     'bootstrap3-dialog#1.34.9',
-    'chosen#1.4.2'
+    'chosen#1.4.2',
+    'datatables.net#^1.10.10',
+    'datatables.net-bs#^1.10.10',
+    'bootstrap-datepicker#^1.5.1',
+
 )
 
 ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO

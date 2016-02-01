@@ -2,7 +2,7 @@
 {%  load bootstrap3 compress repl %}
 {% block navbar %}
     <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                         data-target="#bs-example-navbar-collapse-1">
@@ -30,7 +30,7 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden-xs"><a href="#">{% now "l d \d\e F \d\e Y" %}</a></li>
+                    <li class="hidden-sm"><a href="#">{% now "l d \d\e F \d\e Y" %}</a></li>
                     {% if user.is_authenticated %}
 
                         <li class="item-menu dropdown">
@@ -54,7 +54,7 @@
 
 {% endblock %}
 {% block base_content %}
-<div class="container main-wrapper">
+<div class="{% block wide_class %}container-fluid{% endblock %} main-wrapper">
     {% block title %}{% endblock %}
     {% bootstrap_messages %}
     {% block content %}{% endblock %}

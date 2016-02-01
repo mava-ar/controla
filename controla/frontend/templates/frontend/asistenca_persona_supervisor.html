@@ -1,0 +1,32 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress %}
+{% block active_x_persona %}active{% endblock %}
+{% block total_report %}<span class="text-success">Mostrando registros de {{ table|length|add:"-1" }} personas.</span>{% endblock %}
+{% block btn_export %}
+    <a class="btn btn-info" data-actions="export" data-url="{% url 'supervisor_frontend:export_asistencia' %}">Exportar</a>
+{%  endblock %}
+{% block data_table %}
+    <table class="table table-bordered table-striped table-hover" id="datatables">
+        {% for x in table %}
+            {% if forloop.first %}
+                <thead>
+                    <tr>
+                    {% for y in x %}
+                        <td>{{ y }}</td>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% else %}
+                    <tr>
+                    {% for y in x %}
+                        <td>{{ y }}</td>
+                    {%  endfor %}
+                    </tr>
+                {% endif %}
+                {% if forloop.last %}
+                    </tbody>
+                {% endif %}
+        {% endfor %}
+    </table>
+{%  endblock %}

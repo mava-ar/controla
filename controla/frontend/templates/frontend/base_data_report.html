@@ -1,0 +1,58 @@
+{% extends "frontend/base_supervisor.html" %}
+{% load compress %}
+
+{% block supervisor_content %}
+    <div class="col-sm-12">
+    <form class="form-inline" method="GET" action="." role="form">
+        <fieldset>
+            <legend>Rango de fechas</legend>
+            <div class="form-group">
+                <label class="sr-only" for="fecha_desde" class="control-label">Fecha desde: </label>
+                <div class="input-group date">
+                    <input type="text" name="fecha_desde" id="fecha_desde"  class="form-control datepicker"
+                           placeholder="Fecha desde" value="{{ fecha_desde|date:"d/m/Y" }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="fecha_hasta" class="control-label">Fecha hasta:</label>
+                <div class="input-group date">
+                    <input type="text" name="fecha_hasta" id="fecha_hasta"  class="form-control datepicker"
+                           placeholder="Fecha hasta" value="{{ fecha_hasta|date:"d/m/Y" }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+            </div>
+            <div class="form-group">
+                {% block btn_export %}
+                {%  endblock %}
+            </div>
+            <div class="form-group">
+                {% block total_report %}{% endblock %}
+            </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-sm-12">
+    {% block data_table %}
+    {%  endblock %}
+    </div>
+{% endblock %}
+{% block extra_js %}
+    {% compress js %}
+        <script type="text/javascript" >
+
+            $(document).ready(function() {
+                $(".datepicker").datepicker({
+                    format: 'dd/mm/yyyy',
+                    language: 'es'
+                });
+
+                $("[data-actions=export]").click(function(e){
+                    e.preventDefault();
+                    window.location = $(this).data("url") + "?fecha_desde=" + $("#fecha_desde").val() + "&fecha_hasta=" + $("#fecha_hasta").val();
+                });
+            });
+        </script>
+    {% endcompress %}
+{% endblock %}
