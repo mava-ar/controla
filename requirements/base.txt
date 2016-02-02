@@ -7,8 +7,8 @@ django-simple-history
 django-bower>=5.0.4
 django-compressor>=1.6
 django-pipeline>=1.5.4
-django-admin-bootstrapped>=2.5.7
 django-bootstrap3>=6.2.2
 django-libsass
 libsass>=0.9.3
 django-autocomplete-light
+django-suit

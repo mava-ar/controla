@@ -1,12 +1,12 @@
 {% extends "frontend/base_data_report.html" %}
 {% load compress frontend_tags%}
 {% block active_percentual %}active{% endblock %}
-{% block total_report %}<span class="text-success">Mostrando registros de {{ table|length|add:"-1" }} días.</span>{% endblock %}
+{% block total_report %}<span class="panel text-primary">Mostrando registros de {{ table|length|add:"-1" }} días.</span>{% endblock %}
 {% block btn_export %}
-    <a class="btn btn-info" data-actions="export" data-url="{% url 'supervisor_frontend:export_porcentual' %}">Exportar</a>
+    <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_porcentual' %}">Exportar</a>
 {%  endblock %}
 {% block data_table %}
-    <div class="panel panel-info">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <h4>Totales</h4>
         </div>

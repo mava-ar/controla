@@ -10,4 +10,8 @@ urlpatterns = [
     url(r'^asistencia_persona/$', views.asistencia_persona, name="asistencia_persona"),
     url(r'^export_porcentual/$', views.export_porcentual, name="export_porcentual"),
     url(r'^export_asistencia/$', views.export_asistencia, name="export_asistencia"),
+    url(r'^index_responsable/$', views.index_responsable, name="index_responsable"),
+    url(r'^ver_proyectos/$', views.ver_proyectos_ajax, name="ver_proyectos_ajax"),
+    url(r'^asistencia/(?P<pk>\d+)/$', views.ver_asistencia, name="ver_asistencia"),
+    url(r'^asistencia/(?P<pk>\d+)/alta/$', views.alta_asistencia, name="alta_asistencia"),
 ]

@@ -13,7 +13,7 @@ class EstadoAdmin(SimpleHistoryAdmin):
 @admin.register(Proyecto)
 class ProyectoAdmin(SimpleHistoryAdmin):
     list_display = ('nombre', 'total_personas', 'responsable', 'activo_status')
-
+    actions = None
     search_fields = ('nombre', )
     ordering = ('fecha_baja', )
 
@@ -38,6 +38,7 @@ class PersonaAdmin(SimpleHistoryAdmin):
     list_display = ('apellido', 'nombre', 'cuil', 'cct', 'proyecto', )
     search_fields = ('apellido', 'nombre',)
     list_filter = ('cct', 'proyecto', )
+    actions = None
 
 
 class RegistroAsistenciaInlineAdmin(admin.TabularInline):
@@ -45,6 +46,10 @@ class RegistroAsistenciaInlineAdmin(admin.TabularInline):
     can_delete = False
     model = RegistroAsistencia
     fields = ('persona', 'estado', )
+    readonly_fields = ('persona', )
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(Asistencia)
@@ -54,6 +59,8 @@ class AsistenciaAdmin(SimpleHistoryAdmin):
     inlines = [RegistroAsistenciaInlineAdmin, ]
     fields = ('fecha', 'proyecto', )
 
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
 
 @admin.register(Responsable)
 class ResponsableAdmin(SimpleHistoryAdmin):

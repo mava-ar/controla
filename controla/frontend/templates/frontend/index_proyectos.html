@@ -2,40 +2,7 @@
 {% load bootstrap3 frontend_tags %}
 {% block wide_class %}container{% endblock %}
 {% block content %}
-    {% if proyectos %}
-        <div class="jumbotron">
-            <h1>Proyectos a cargo</h1>
-            <p>Seleccione el proyecto para el cual desea realizar la asistencia diaria:</p>
-            <div class="container proyecto-list">
-                {% for f in proyectos %}
-                <div class="col-lg-6 col-md-9">
-                    <a href="{% url 'responsable_frontend:alta_asistencia' f.pk %}"
-                       class="btn  btn-{% if f.pk in asistencia_dia %}success{% else %}primary{% endif %} btn-lg btn-block">
-                        <div class="col-xs-2">
-                            {% if f.pk in asistencia_dia %}
-                                <i class="fa fa-check-circle-o"></i>
-                            {%  else %}
-                                <i class="fa fa-exclamation"></i>
-                            {% endif %}
-                        </div>
-                        <div class="col-xs-10 text-left">
-                            <strong>{{ f.nombre }}</strong>
-                            <h5>{{ f.total_personas }}</h5>
-                        </div>
-
-
-                    </a>
-                </div>
-            {% endfor %}
-            </div>
-        </div>
-
-    {% else %}
-        <div class="jumbotron">
-        <h2 class="text-warning">
-        Actualmente, no tiene asignados proyectos. Si creé que esto es un error,
-            comuníquese con los supervisores de Recursos Humanos.
-        </h2>
-        </div>
-    {% endif %}
+    <h1>Proyectos a cargo</h1>
+    <p>Seleccione el proyecto para el cual desea realizar la asistencia diaria:</p>
+    {% include 'frontend/includes/_index_proyectos.html' %}
 {% endblock %}

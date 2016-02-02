@@ -1,7 +1,7 @@
 {% extends "frontend/base.html" %}
 {%  load bootstrap3 compress repl %}
 {% block navbar %}
-    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -16,11 +16,11 @@
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="{% url 'index' %}">Inicio</a></li>
+                    <li class="{% block index_act %}active{% endblock %}"><a href="{% url 'index' %}">Inicio</a></li>
 
                     {% if request.user.cambia_personal %}
                         {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
-                            <li><a href="{% url url1 %}">Reasignar personal</a></li>
+                            <li class="{% block reasignar_act %}{% endblock %}"><a href="{% url url1 %}">Reasignar personal</a></li>
                         {% endwith %}
 
                     {% endif %}
@@ -62,8 +62,7 @@
 {%  endblock %}
 {% block footer %}
 <footer class="container-fluid">
-  {% now "Y" %} - MAVA - Ingeniería Informática
-
+  {% include 'frontend/includes/_footer.html' %}
 </footer>
 {% endblock %}
 {% block js %}

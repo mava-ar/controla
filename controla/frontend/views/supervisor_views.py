@@ -1,21 +1,23 @@
 from datetime import datetime, timedelta
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
+from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
-from frontend.views.base import BaseReasignarPersonalView, BaseReportView
+from frontend.views.base import BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView, BaseAltaAsistenciaView
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona)
 from frontend.excel import ExportToExcel
 
 
-class IndexProyect(SupervisorViewMixin, TemplateView):
+class DashboardView(SupervisorViewMixin, TemplateView):
     template_name = "frontend/dashboard_supervisor.html"
 
     def get_context_data(self, **kwargs):
-        data = super(IndexProyect, self).get_context_data(**kwargs)
+        data = super(DashboardView, self).get_context_data(**kwargs)
         data["perc_asis_proyecto"] = porcentaje_asistencia_proyecto()
         data["perc_no_ocioso"] = porcentaje_actividad()
         data["perc_asis_persona"] = porcentaje_asistencia_persona()
@@ -76,9 +78,60 @@ class ExportAsistenciaPersonaView(BaseReportView, TemplateView):
         return response
 
 
-index = IndexProyect.as_view()
+class IndexResponsable(SupervisorViewMixin, TemplateView):
+    template_name = "frontend/index_responsables.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(IndexResponsable, self).get_context_data(**kwargs)
+        data["responsables"] = dict([(x[0], "{} {}".format(x[1], x[2])) for x in
+                                     Responsable.objects.values_list(
+                                             'persona__pk', 'persona__apellido', 'persona__nombre').distinct()])
+        return data
+
+
+class VerProyectosAjaxView(SupervisorViewMixin, TemplateView):
+    template_name = "frontend/includes/_index_proyectos.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(VerProyectosAjaxView, self).get_context_data(**kwargs)
+        pk = self.request.GET.get('pk', None)
+        if pk:
+            data["proyectos"] = Proyecto.objects.filter(responsable_rel__persona_id=pk).all()
+            hoy = datetime.now()
+            data["asistencia_dia"] = list(Asistencia.objects.filter(
+                    proyecto__in=data["proyectos"], fecha=hoy).values_list('proyecto__pk', flat=True))
+        return data
+
+    def get(self, request, *args, **kwargs):
+        return self.render_to_response(self.get_context_data())
+
+
+class AltaAsistenciaView(SupervisorViewMixin, BaseAltaAsistenciaView):
+
+    def get_details_asistencia_url(self, pk):
+        return reverse_lazy('supervisor_frontend:ver_asistencia', kwargs={'pk': pk})
+
+    def get_success_url(self, *args, **kwargs):
+        messages.add_message(self.request, messages.SUCCESS,
+                             "Asistencia enviada correctamente.")
+        if self.object:
+            return reverse_lazy('supervisor_frontend:ver_asistencia',
+                                kwargs={'pk': self.object.pk})
+        else:
+            return reverse('supervisor_frontend:index')
+
+
+class DetailAsistenciaView(SupervisorViewMixin, BaseDetailAsistenciaView):
+    pass
+
+
+index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
 asistencia_persona = AsistenciaPorPersonaView.as_view()
 export_porcentual = ExportDatosPorcentualesView.as_view()
 export_asistencia = ExportAsistenciaPersonaView.as_view()
+index_responsable = IndexResponsable.as_view()
+ver_proyectos_ajax = VerProyectosAjaxView.as_view()
+alta_asistencia = AltaAsistenciaView.as_view()
+ver_asistencia = DetailAsistenciaView.as_view()

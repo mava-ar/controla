@@ -9,8 +9,11 @@
       <li class="{% block active_index %}{% endblock %}"><a href="{% url 'index' %}">Panel</a></li>
       <li class="{% block active_percentual %}{% endblock %}"><a href="{% url 'supervisor_frontend:datos_porcentuales' %}">Datos porcentuales</a></li>
       <li class="{% block active_x_persona %}{% endblock %}"><a href="{% url 'supervisor_frontend:asistencia_persona' %}">Asistencia por persona</a></li>
-      
+      <li class="{% block active_alta_asistencia %}{% endblock %}"><a href="{% url 'supervisor_frontend:index_responsable' %}">Alta de asistencia por Responsable</a></li>
+
     </ul>
-    <h2 class="main-title">Control de ausentismo</h2>
+    {% block subtitle %}
+        <h2 class="main-title">Control de ausentismo</h2>
+    {% endblock %}
     {% block supervisor_content %}{% endblock %}
 {% endblock %}

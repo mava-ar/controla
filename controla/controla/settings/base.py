@@ -23,9 +23,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'django_admin_bootstrapped',
-    'autocomplete_light',
+    # 'django_admin_bootstrapped',
     'frontend',
+    'suit',
+    'autocomplete_light',
+
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -212,3 +214,14 @@ BOWER_INSTALLED_APPS = (
 )
 
 ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO
+
+SUIT_CONFIG = {
+    'ADMIN_NAME': 'ZILLE - RRHH',
+    'HEADER_DATE_FORMAT': 'l, d F Y',
+    'SEARCH_URL': 'admin:modelo_persona_changelist',
+    'MENU': (
+        'modelo',
+        {'app': 'users', 'label': 'Usuarios', 'icon':'icon-user'},
+        {'label': 'Volver a la aplicación', 'url':'index', 'icon':'icon-th'},
+    )
+}

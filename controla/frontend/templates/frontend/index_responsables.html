@@ -1,0 +1,53 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress frontend_tags%}
+{% block active_alta_asistencia %}active{% endblock %} %}
+{% block subtitle %}
+    <h2 class="main-title">Alta de asistencia por responsable</h2>
+    {% endblock %}
+{% block supervisor_content %}
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="sr-only" for="responsables" class="control-label">Responsable: </label>
+                <select name="responsables" id="responsables"  class="form-control">
+                    <option value="">Seleccione un responsable</option>
+                    {% for k, v in responsables.items %}
+                        <option value="{{ k }}">{{ v }}</option>
+                    {% endfor %}
+                    </select>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-primary" id="ver_proyectos">Ver proyectos</a>
+        </div>
+
+    </div>
+    <div class="row">
+        <div id="content-proyectos" class="container">
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block extra_js %}
+    {% compress js %}
+        <script type="text/javascript" >
+
+            $(document).ready(function() {
+                //$("select").chosen();
+                $("#ver_proyectos").click(function(e){
+                    e.preventDefault();
+                    var id = $("#responsables").val();
+                    if(id!=""){
+                        $("#content-proyectos").load('{% url 'supervisor_frontend:ver_proyectos_ajax' %}' + '?pk=' + id);
+                    } else {
+                        $("#content-proyectos").html("");
+                    }
+                });
+
+            });
+        </script>
+    {% endcompress %}
+{% endblock %}

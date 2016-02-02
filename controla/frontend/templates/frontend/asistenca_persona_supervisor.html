@@ -1,9 +1,9 @@
 {% extends "frontend/base_data_report.html" %}
 {% load compress %}
 {% block active_x_persona %}active{% endblock %}
-{% block total_report %}<span class="text-success">Mostrando registros de {{ table|length|add:"-1" }} personas.</span>{% endblock %}
+{% block total_report %}<span class="panel text-primary">Mostrando registros de {{ table|length|add:"-1" }} personas.</span>{% endblock %}
 {% block btn_export %}
-    <a class="btn btn-info" data-actions="export" data-url="{% url 'supervisor_frontend:export_asistencia' %}">Exportar</a>
+    <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_asistencia' %}">Exportar</a>
 {%  endblock %}
 {% block data_table %}
     <table class="table table-bordered table-striped table-hover" id="datatables">
@@ -30,3 +30,21 @@
         {% endfor %}
     </table>
 {%  endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" >
+            $(document).ready(function() {
+                $("#datatables").DataTable({
+                    "ordering": false,
+                    "info": false,
+                    "paging": false,
+                    "language": {
+                        "url": "/static/frontend/i18n/spanish.json"
+                    }
+                });
+            });
+        </script>
+    {% endcompress %}
+{% endblock %}

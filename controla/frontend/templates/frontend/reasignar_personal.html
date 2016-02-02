@@ -1,5 +1,7 @@
 {% extends "frontend/layout_base.html" %}
 {% load bootstrap3 frontend_tags compress %}
+{% block index_act %}{% endblock %}
+{% block reasignar_act %}active{% endblock %}
 {%  block title %}
     <h2 class="main-title">Reasignación de personal</h2>
 {% endblock %}
@@ -16,12 +18,12 @@
         <div class="row reasignar">
 
             <div class="col-sm-6">
-                <p class="alert alert-danger">Primero, busque a la persona que desea cambiar de proyecto:</p>
+                <p class="well well-sm">Primero, busque a la persona que desea cambiar de proyecto:</p>
                 {% bootstrap_field form.persona %}
             </div>
 
             <div class="col-sm-6">
-                <p class="alert alert-danger">Escoja su nuevo proyecto:</p>
+                <p class="well well-sm">Escoja su nuevo proyecto:</p>
                 {% bootstrap_field form.proyecto %}
             </div>
         </div>

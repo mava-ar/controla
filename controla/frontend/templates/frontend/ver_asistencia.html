@@ -6,12 +6,18 @@
 {% endblock %}
 {% block content %}
 
-    <h3>Proyecto: <strong>{{ object.proyecto }}</strong></h3>
+    <h3>
+        Proyecto: <strong>{{ object.proyecto }}</strong>
+        {% if request.user.is_supervisor %}
+        <a class="btn btn-primary pull-right" href="{% url 'admin:modelo_asistencia_change' object.pk %}" target="_blank">Editar</a>
+        {% endif %}
+    </h3>
         <table class="table table-striped">
         <thead>
         <tr>
             <th>Nombre</th>
             <th colspan="2">Estado de asistencia</th>
+
         </tr>
         </thead>
         <tbody>
