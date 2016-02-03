@@ -1,6 +1,7 @@
 import csv
 import os
 from datetime import datetime
+from django.utils import timezone
 from django.core.management.base import BaseCommand, CommandError
 
 from modelo.models import Estado, CCT, Persona, Proyecto, Asistencia, RegistroAsistencia, Responsable
@@ -17,10 +18,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-
-        # copiar responsable proyecto en un campo nuevo nombre_responsable_ori
-        # cuando se busca responsable, buscar por apellido y algun nombre
-
         if options['filename'] == None:
             raise CommandError("Debe especificar la ruta al archivo CSV.")
 
@@ -36,6 +33,7 @@ class Command(BaseCommand):
                     self.stdout.write("Fecha en formato erroneo. Saltando fila")
                     self.fecha = None
                     continue
+                self.fecha = timezone.make_aware(self.fecha)
                 pers_filt = Persona.objects.filter(legajo=row[0])
                 proyecto = None
                 if pers_filt:
@@ -93,8 +91,10 @@ class Command(BaseCommand):
 
     def buscar_responsable(self, proyecto, row):
         nom_list = row[6].split(' ')
+        if nom_list[0].startswith("Olivo"):
+            nom_list[0] = "Olivo"
         persona = Persona.objects.filter(
-            apellido__in=nom_list, nombre__in=nom_list)
+            apellido=nom_list[0], nombre__icontains=nom_list[1])
         if persona:
             try:
                 responsable = Responsable.objects.get(proyecto=proyecto)

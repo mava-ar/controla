@@ -1,0 +1,24 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+
+<div class="alert alert-block alert-danger">
+    <h2 class="alert-heading">Se realizará la baja de las/os siguientes {{ objects_name }}. ¿Continuar?</h2>
+    <ul>
+        {% for x in baja_objects %}
+            <li>{{ x}}</li>
+        {% endfor %}
+    </ul>
+    <br>
+    <form action="" method="post">{% csrf_token %}
+    {% for id in ids %}
+        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ id.0 }}" />
+    {% endfor %}
+    <input type="hidden" name="post" value="yes" />
+    <input type="hidden" name="action" value="dar_de_baja" />
+    <a href="." class="btn btn-default">Cancelar</a>
+    <input type="submit" value="Si, estoy seguro" class="btn btn-danger" />
+    </form>
+
+</div>
+
+{% endblock %}

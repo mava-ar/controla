@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 
 
@@ -25,7 +25,7 @@ class BaseModelWithHistory(BaseModel):
         if self.__history_date:
             return self.__history_date
         else:
-            return datetime.now()
+            return timezone.now()
 
     @_history_date.setter
     def _history_date(self, value):
