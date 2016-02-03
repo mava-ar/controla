@@ -11,7 +11,7 @@
     <form action="." method="post" id="reasignar-form">
         {% csrf_token %}
         <div class="well">
-                Mediante esta herramiento, podrá cambiar el proyecto asignado a cualquier persona.
+                Mediante esta herramienta, podrá reasignar personas a proyectos.
                 Este cambio se ve reflejado inmediantemente, por lo que la persona seleccionada
                 será listada en la lista del nuevo proyecto de forma inmediata.
             </div>
@@ -35,8 +35,6 @@
     {% compress js %}
     <script type="text/javascript">
         (function($){
-
-
             $(document).ready(function(){
                 $("#btn-submit").click(function(e){
                     e.preventDefault();
@@ -48,7 +46,6 @@
                 });
                 $("#id_proyecto").chosen({'search_contains':true});
             });
-
         })(jQuery);
     </script>
     {% endcompress %}

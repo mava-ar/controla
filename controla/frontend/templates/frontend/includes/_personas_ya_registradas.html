@@ -1,0 +1,22 @@
+{% if ya_registradas %}
+
+        <h4>Personas con registro de hoy en otros proyectos</h4>
+        <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Estado de asistencia</th>
+            <th>Proyecto</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for x in ya_registradas %}
+            <tr>
+                <td>{{ x.persona__apellido }} {{ x.persona__nombre }}</td>
+                <td>{{ x.estado__codigo }} - {{ x.estado__situacion }}</td>
+                <td>{{ x.asistencia__proyecto__nombre }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    {% endif %}

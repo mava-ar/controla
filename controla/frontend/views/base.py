@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.views import logout as django_logout
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import IntegrityError
+from django.db.models import Q
 from django.db.transaction import atomic
 from django.views.generic import RedirectView, TemplateView, CreateView, DetailView
 from django.http import HttpResponseRedirect
@@ -115,13 +116,20 @@ class BaseAltaAsistenciaView(CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(BaseAltaAsistenciaView, self).get_context_data(**kwargs)
-        pk = self.kwargs.get(self.pk_url_kwarg)
-        proyecto = Proyecto.objects.get(pk=pk)
         personas = dict(
                 [ (x["pk"], "{} {}".format(x["nombre"], x["apellido"]) ) for x in Persona.objects.filter(
-                        proyecto=proyecto).values('pk','nombre', 'apellido') ]
+                        proyecto=self.proyecto).values('pk','nombre', 'apellido') ]
         )
-        data["proyecto"] = proyecto
+        registros_existente = RegistroAsistencia.objects.filter(
+                persona_id__in=personas.keys(), asistencia__fecha=datetime.now()).select_related(
+                "asistencia__proyecto, persona").values(
+                'persona__nombre', 'persona__apellido', 'estado__codigo', 'estado__situacion',
+                'asistencia__proyecto__nombre')
+        if registros_existente:
+            data["ya_registradas"] = registros_existente
+            for x in data["ya_registradas"]:
+                personas.pop(x.persona_id, 0)
+        data["proyecto"] = self.proyecto
         data["personas"] = personas
         if "formsets" not in kwargs:
             estado = settings.ESTADO_DEFAULT
@@ -131,7 +139,8 @@ class BaseAltaAsistenciaView(CreateView):
 
     def get_form_kwargs(self, **kwargs):
         kwargs = super(BaseAltaAsistenciaView, self).get_form_kwargs(**kwargs)
-        kwargs['initial']['proyecto'] = Proyecto.objects.get(pk=self.kwargs.get(self.pk_url_kwarg))
+        self.proyecto = Proyecto.objects.get(pk=self.kwargs.get(self.pk_url_kwarg))
+        kwargs['initial']['proyecto'] =  self.proyecto
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -169,6 +178,21 @@ class BaseAltaAsistenciaView(CreateView):
 class BaseDetailAsistenciaView(DetailView):
     model = Asistencia
     template_name = "frontend/ver_asistencia.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(BaseDetailAsistenciaView, self).get_context_data()
+        context["ya_registradas"] = RegistroAsistencia.objects.filter(
+                persona__in=context["asistencia"].proyecto.personas_involucradas.all(),
+                asistencia__fecha=datetime.now()).exclude(
+                asistencia=context["asistencia"]).select_related("asistencia__proyecto").values(
+                'persona__nombre', 'persona__apellido', 'estado__codigo', 'estado__situacion',
+                'asistencia__proyecto__nombre')
+        return context
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        self.object = Asistencia.objects.filter(pk=pk).prefetch_related('items__estado', 'items__persona').get()
+        return self.object
 
 
 index = RedirectRolView.as_view()

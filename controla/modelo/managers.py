@@ -17,3 +17,11 @@ class PersonaManager(models.Manager):
 
     def get_queryset(self):
         return super(PersonaManager, self).get_queryset().filter(fecha_baja=None)
+
+
+class RegistroAsistenciaManager(models.Manager):
+    """
+    Sin usar por ahora.
+    """
+    def get_queryset(self):
+        return super(RegistroAsistenciaManager, self).get_queryset().select_related('estado')

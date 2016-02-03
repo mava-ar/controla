@@ -1,0 +1,10 @@
+{% extends "suit/error_base.html" %}
+{% load i18n %}
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block error %}{% trans 'error'|capfirst %} 404{% endblock %}
+
+{% block content %}
+  No podemos encontrar lo que está bucando.
+{% endblock %}

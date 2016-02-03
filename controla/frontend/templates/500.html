@@ -1,0 +1,10 @@
+{% extends "suit/error_base.html" %}
+{% load i18n %}
+
+{% block title %}Error en el servidor{% endblock %}
+
+{% block error %}{% trans 'error'|capfirst %} 500{% endblock %}
+
+{% block content %}
+    Ocurrió un error. Se reportó via email al administrador y será solucionado a la brevedad. Gracias por su paciencia.
+{% endblock %}

@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^index_responsable/$', views.index_responsable, name="index_responsable"),
     url(r'^ver_proyectos/$', views.ver_proyectos_ajax, name="ver_proyectos_ajax"),
     url(r'^asistencia/(?P<pk>\d+)/$', views.ver_asistencia, name="ver_asistencia"),
+    url(r'^asistencia/(?P<pk>\d+)/export2pdf$', views.export_asistencia_pdf, name="export_asistencia_pdf"),
     url(r'^asistencia/(?P<pk>\d+)/alta/$', views.alta_asistencia, name="alta_asistencia"),
 ]

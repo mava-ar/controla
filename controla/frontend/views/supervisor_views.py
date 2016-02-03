@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from io import BytesIO
 
 from django.contrib import messages
 from django.http import HttpResponse
@@ -11,6 +12,7 @@ from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona)
 from frontend.excel import ExportToExcel
+from frontend.reports import PdfPrintAltaAsistencia
 
 
 class DashboardView(SupervisorViewMixin, TemplateView):
@@ -125,6 +127,21 @@ class DetailAsistenciaView(SupervisorViewMixin, BaseDetailAsistenciaView):
     pass
 
 
+class Export2PDFView(SupervisorViewMixin, BaseDetailAsistenciaView):
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        #response = super(Export2PDFView, self).get(request, *args, **kwargs)
+        response = HttpResponse(content_type='application/pdf')
+        filename = 'Asistencia-{}-{}'.format(self.object.proyecto, self.object.fecha.strftime("%d-%m-%Y")).replace(' ', '_')
+        response['Content-Disposition'] = 'attachement; filename={0}.pdf'.format(filename)
+        buffer = BytesIO()
+        report = PdfPrintAltaAsistencia(buffer, 'A4')
+        pdf = report.report(self.object, 'Asistencia {}'.format(self.object.fecha.strftime('%d/%m/%Y')))
+        response.write(pdf)
+        return response
+
+
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
@@ -135,3 +152,4 @@ index_responsable = IndexResponsable.as_view()
 ver_proyectos_ajax = VerProyectosAjaxView.as_view()
 alta_asistencia = AltaAsistenciaView.as_view()
 ver_asistencia = DetailAsistenciaView.as_view()
+export_asistencia_pdf = Export2PDFView.as_view()

@@ -11,7 +11,7 @@
         <div class="col-sm-6"><h3>Proyecto: <strong>{{ proyecto }}</strong></h3></div>
         <div class="col-sm-6"><h3>Fecha: <strong>{% now "d/m/Y" %}</strong></h3></div>
         {% if request.user.is_supervisor %}
-            <div class="col-sm-6"><h3>Reponsable: <strong>{{ proyecto.responsable_rel.persona }}</strong></h3></div>
+            <div class="col-sm-6"><h3>Reponsable: <strong>{{ proyecto.responsable_rel }}</strong></h3></div>
         {% endif %}
     </div>
 
@@ -42,6 +42,7 @@
         </tbody>
     </table>
 
+    {% include 'frontend/includes/_personas_ya_registradas.html' %}
 
         <a class="btn btn-default" href="{% url 'index' %}">Volver</a> |
         <input type="submit" value="Guardar" class="submit btn btn-primary" id="btn-submit"/>

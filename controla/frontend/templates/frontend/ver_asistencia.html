@@ -8,9 +8,14 @@
 
     <h3>
         Proyecto: <strong>{{ object.proyecto }}</strong>
+
         {% if request.user.is_supervisor %}
-        <a class="btn btn-primary pull-right" href="{% url 'admin:modelo_asistencia_change' object.pk %}" target="_blank">Editar</a>
+            <a class="btn btn-default pull-right"
+           href="{% url 'supervisor_frontend:export_asistencia_pdf' object.pk %}">Exportar a PDF</a>
+            <a class="btn btn-primary pull-right"
+               href="{% url 'admin:modelo_asistencia_change' object.pk %}" target="_blank">Editar</a>
         {% endif %}
+
     </h3>
         <table class="table table-striped">
         <thead>
@@ -30,4 +35,6 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% include 'frontend/includes/_personas_ya_registradas.html' %}
 {% endblock %}

@@ -1,0 +1,10 @@
+{% extends "suit/error_base.html" %}
+{% load i18n %}
+
+{% block title %}Prohibido{% endblock %}
+
+{% block error %}{% trans 'error'|capfirst %} 403{% endblock %}
+
+{% block content %}
+  Lo sentimos, pero lo que intenta hacer no está permitido.
+{% endblock %}
