@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'compressor',
     'simple_history',
+    "djcelery_email",
 
     'dj_utils',
     'modelo',

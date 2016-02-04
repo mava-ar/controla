@@ -16,9 +16,11 @@ class MyUserAdmin(UserAdmin, SimpleHistoryAdmin):
     form = MyUserChangeForm
     fieldsets = (
         (None, {
-            'fields': ('rol', 'cambia_personal', )
+            'fields': ('rol', 'cambia_personal', 'notificar_alta_individual')
         }),
     ) + UserAdmin.fieldsets
+
+    list_display = ('username', 'rol', 'email', 'first_name', 'last_name', 'is_staff',)
 
 
 admin.site.register(User, MyUserAdmin)

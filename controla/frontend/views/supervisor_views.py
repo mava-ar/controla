@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.mail import send_mail, EmailMessage
+
 from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
 from frontend.views.base import BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView, BaseAltaAsistenciaView
@@ -131,13 +133,9 @@ class Export2PDFView(SupervisorViewMixin, BaseDetailAsistenciaView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        #response = super(Export2PDFView, self).get(request, *args, **kwargs)
         response = HttpResponse(content_type='application/pdf')
-        filename = 'Asistencia-{}-{}'.format(self.object.proyecto, self.object.fecha.strftime("%d-%m-%Y")).replace(' ', '_')
-        response['Content-Disposition'] = 'attachement; filename={0}.pdf'.format(filename)
-        buffer = BytesIO()
-        report = PdfPrintAltaAsistencia(buffer, 'A4')
-        pdf = report.report(self.object, 'Asistencia {}'.format(self.object.fecha.strftime('%d/%m/%Y')))
+        response['Content-Disposition'] = 'attachement; filename={0}.pdf'.format(self.object.filename_report)
+        pdf = PdfPrintAltaAsistencia().get_pdf(self.object)
         response.write(pdf)
         return response
 

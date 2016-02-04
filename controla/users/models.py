@@ -17,8 +17,11 @@ class User(AbstractUser, BaseModel):
 
     rol = models.SmallIntegerField("rol", choices=ROLES, default=RESPONSABLE)
     cambia_personal = models.BooleanField("¿Puede reasignar personas a proyectos?", default=False,
-                                          help_text="Al l habilitar esta opción (con rol RESPONSABLE), el usuario "
+                                          help_text="Al habilitar esta opción, el usuario "
                                                     "puede cambiar el proyecto al cuál está asignado una persona.")
+    notificar_alta_individual = models.BooleanField(
+            "Notificar alta asistencia", default=True,
+            help_text="Se notificará vía email el alta de asistencia de proyectos relacionados.")
 
     @property
     def is_supervisor(self):

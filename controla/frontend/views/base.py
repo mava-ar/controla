@@ -15,6 +15,7 @@ from users.models import User
 from frontend.forms import ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet
 from dj_utils.dates import get_30_days, format_date
 from .mixins import SupervisorViewMixin
+from frontend.notifications import send_notification
 
 
 class RedirectRolView(AuthenticatedMixin, RedirectView):
@@ -169,6 +170,7 @@ class BaseAltaAsistenciaView(CreateView):
                     if f.cleaned_data["estado"]:
                         reg.estado = f.cleaned_data["estado"]
                     reg.save()
+            send_notification(self.object)
         except IntegrityError:
             self.form_invalid(form, formsets)
 

@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -9,6 +11,9 @@ from dj_utils.pdf_utils import PdfPrint
 
 
 class PdfPrintAltaAsistencia(PdfPrint):
+    def __init__(self):
+        super(PdfPrintAltaAsistencia, self).__init__(BytesIO(), 'A4')
+
     def report(self, asistencia, title):
         doc = SimpleDocTemplate(
             self.buffer,
@@ -61,3 +66,6 @@ class PdfPrintAltaAsistencia(PdfPrint):
         self.buffer.close()
         return pdf
 
+    def get_pdf(self, asistencia):
+        pdf = self.report(asistencia, 'Asistencia {}'.format(asistencia.fecha.strftime('%d/%m/%Y')))
+        return pdf

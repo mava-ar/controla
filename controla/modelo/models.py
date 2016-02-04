@@ -169,6 +169,10 @@ class Asistencia(BaseModelWithHistory):
     def total_items(self):
         return "{} items".format(self.items.count())
 
+    @property
+    def filename_report(self):
+        return 'Asistencia-{}-{}'.format(self.proyecto, self.fecha.strftime("%d-%m-%Y")).replace(' ', '_')
+
 
 class RegistroAsistencia(BaseModelWithHistory):
     """
