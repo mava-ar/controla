@@ -12,3 +12,4 @@ django-libsass
 libsass>=0.9.3
 django-autocomplete-light
 django-suit
+django-celery-email
