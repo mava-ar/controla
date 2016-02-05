@@ -71,6 +71,7 @@ class Command(BaseCommand):
                     registro._history_date = self.fecha
                     registro.save()
                     self.r_new += 1
+                    self.stdout.write("Registro creado -> {}".format(registro))
 
         self.stdout.write("Se han creado o actualizado {} persona, {} "
                           "asistencias con un total de {} registros.".format(
@@ -112,11 +113,10 @@ class Command(BaseCommand):
             p = Proyecto.objects.get(nombre="Sin proyecto")
             return p
         else:
-
             try:
-                p = Proyecto.objects.get(nombre=nombre)
+                p = Proyecto.objects.get(nombre=nombre.strip())
             except Proyecto.DoesNotExist:
-                p = Proyecto(nombre=nombre)
+                p = Proyecto(nombre=nombre.strip())
                 p._history_date = self.fecha
                 p.save()
             self.buscar_responsable(p, row)
