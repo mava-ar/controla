@@ -154,11 +154,14 @@ def get_datos_porcentuales(start, end):
         report.append(aux)
 
     for est in estados:
-        totales_row.append(totales_rango.get(est, 0) / total_rango)
+        if total_rango == 0:
+            totales_row.append(0)
+        else:
+            totales_row.append(totales_rango.get(est, 0) / total_rango)
     report.append(totales_row)
 
     for k,v in totales_rango.items():
-        totales_rango[k] = v / total_rango * 100
+        totales_rango[k] = v / total_rango * 100 if total_rango != 0 else 0
     return report, totales_rango
 
 
