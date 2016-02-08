@@ -9,7 +9,7 @@ INSTALLED_APPS += (
 ALLOWED_HOSTS = ['127.0.0.1', ]
 
 ADMINS = [
-    ('Matias Varela', 'matu.varela@gmail.com'),
+    ('Matias Varela', 'matias.varela@info-ingenieria.com.ar'),
 ]
 
 LOGGING = {
@@ -21,12 +21,22 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': normpath(join(SITE_ROOT, '../../logs/django-debug.log')),
         },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
     },
     'loggers': {
         'django': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        'django_mail': {
+            'handlers': ['mail_admins'],
+            'propagate': True,
+            'level': 'ERROR',
         },
     },
 }
