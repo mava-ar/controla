@@ -1,6 +1,5 @@
 from .base import *  # noqa
 
-
 DEBUG = False
 
 INSTALLED_APPS += (
@@ -33,6 +32,7 @@ LOGGING = {
 }
 
 PIPELINE.update({'PIPELINE_ENABLED': True})
+COMPRESS_ENABLED = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
