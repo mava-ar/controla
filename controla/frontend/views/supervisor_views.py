@@ -9,7 +9,8 @@ from django.core.mail import send_mail, EmailMessage
 
 from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
-from frontend.views.base import BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView, BaseAltaAsistenciaView
+from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView,
+                                 BaseAltaAsistenciaView, BaseNotificacionesView)
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona)
@@ -140,6 +141,10 @@ class Export2PDFView(SupervisorViewMixin, BaseDetailAsistenciaView):
         return response
 
 
+class NotificacionesView(SupervisorViewMixin, BaseNotificacionesView):
+    pass
+
+
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
@@ -151,3 +156,4 @@ ver_proyectos_ajax = VerProyectosAjaxView.as_view()
 alta_asistencia = AltaAsistenciaView.as_view()
 ver_asistencia = DetailAsistenciaView.as_view()
 export_asistencia_pdf = Export2PDFView.as_view()
+update_notification = NotificacionesView.as_view()

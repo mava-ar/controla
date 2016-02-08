@@ -1,0 +1,11 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags %}
+{% block wide_class %}container{% endblock %}
+{% block content %}
+    <h3>Notificaciones</h3>
+    <form method="post" id="notification-form">
+        {% csrf_token %}
+    {% bootstrap_form form %}
+    <input type="submit" value="Actualizar" class="submit btn btn-primary" id="btn-submit"/>
+    </form>
+{% endblock %}

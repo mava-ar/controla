@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^asistencia/(?P<pk>\d+)/$', views.ver_asistencia, name="ver_asistencia"),
     url(r'^asistencia/(?P<pk>\d+)/export2pdf$', views.export_asistencia_pdf, name="export_asistencia_pdf"),
     url(r'^asistencia/(?P<pk>\d+)/alta/$', views.alta_asistencia, name="alta_asistencia"),
+    url(r'^notificaciones$', views.update_notification, name="update_notification")
 ]

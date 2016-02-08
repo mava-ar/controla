@@ -1,11 +1,10 @@
-from datetime import datetime
 from django import forms
-from django.forms.models import inlineformset_factory
 from django.forms.formsets import formset_factory
 
 from autocomplete_light import ModelChoiceField
 
 from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona, Estado
+from users.models import User
 
 
 class AltaAsistenciaForm(forms.ModelForm):
@@ -38,3 +37,9 @@ class ReasignarPersonalForm(forms.Form):
 
     class Meta:
         fields = ('proyecto', 'persona', )
+
+
+class NotificacionUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('notificar_alta_individual', 'notificar_alta_diario', 'alertar_faltantes',)

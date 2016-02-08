@@ -42,6 +42,10 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'password_change' %}">Cambiar contraseña</a></li>
+                            {% with ""|add:request.current_app|add:":update_notification" as url1 %}
+                                <li><a href="{% url url1 %}">Notificaciones</a></li>
+                            {% endwith %}
+
                             <li><a href="#" id="id_Signout">Cerrar sesión</a></li>
                         </ul>
                         </li>

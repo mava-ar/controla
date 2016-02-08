@@ -26,5 +26,5 @@ urlpatterns = [
 urlpatterns += [
     url(r'^responsable/', include('frontend.urls.responsable_urls', namespace='responsable_frontend', app_name='frontend')),
     url(r'^supervisor/', include('frontend.urls.supervisor_urls', namespace='supervisor_frontend', app_name='frontend')),
-    url(r'^$', index, name='index')
+    url(r'^$', index, name='index'),
 ]

@@ -1,21 +1,21 @@
 from datetime import datetime
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.views import logout as django_logout
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.db.models import Q
 from django.db.transaction import atomic
-from django.views.generic import RedirectView, TemplateView, CreateView, DetailView
 from django.http import HttpResponseRedirect
-from django.conf import settings
+from django.views.generic import RedirectView, TemplateView, CreateView, DetailView, UpdateView
 
+from dj_utils.dates import get_30_days, format_date
 from dj_utils.views import AuthenticatedMixin
+from frontend.forms import ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet, NotificacionUserForm
+from frontend.notifications import send_notification
 from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona
 from users.models import User
-from frontend.forms import ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet
-from dj_utils.dates import get_30_days, format_date
 from .mixins import SupervisorViewMixin
-from frontend.notifications import send_notification
 
 
 class RedirectRolView(AuthenticatedMixin, RedirectView):
@@ -205,4 +205,22 @@ class BaseDetailAsistenciaView(DetailView):
         return self.object
 
 
+class BaseNotificacionesView(AuthenticatedMixin, UpdateView):
+    model = User
+    form_class = NotificacionUserForm
+    template_name = 'frontend/update_notification.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.instance = self.request.user
+        self.object.save()
+        messages.add_message(self.request, messages.SUCCESS, "Configuración de notificaciones actualizada correctamente.")
+        return HttpResponseRedirect(reverse('index'))
+
+
 index = RedirectRolView.as_view()
+update_notification = BaseNotificacionesView.as_view()
+

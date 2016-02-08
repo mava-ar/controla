@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from frontend.views.base import BaseReasignarPersonalView, BaseAltaAsistenciaView, BaseDetailAsistenciaView
+from frontend.views.base import (BaseReasignarPersonalView, BaseAltaAsistenciaView, BaseDetailAsistenciaView,
+                                 BaseNotificacionesView)
 from frontend.views.mixins import ResponsableViewMixin
 from modelo.models import Persona, Asistencia
 
@@ -51,7 +52,12 @@ class ReasignarPersonalView(ResponsableViewMixin, BaseReasignarPersonalView):
         return reverse_lazy('responsable_frontend:reasignar_personal')
 
 
+class NotificacionesView(ResponsableViewMixin, BaseNotificacionesView):
+    pass
+
+
 index = IndexProyect.as_view()
 alta_asistencia = AltaAsistenciaView.as_view()
 ver_asistencia = DetailAsistenciaView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
+update_notification = NotificacionesView.as_view()
