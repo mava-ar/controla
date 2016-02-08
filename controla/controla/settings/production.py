@@ -4,6 +4,7 @@ DEBUG = False
 
 INSTALLED_APPS += (
     'gunicorn',
+    'raven.contrib.django.raven_compat',
 )
 
 ALLOWED_HOSTS = ['127.0.0.1', ]
