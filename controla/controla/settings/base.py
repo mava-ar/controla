@@ -163,7 +163,7 @@ PIPELINE = {
                 'bootstrap-sass/assets/javascripts/bootstrap.js',
                 'bootstrap3-dialog/dist/js/bootstrap-dialog.js',
                 'chosen/chosen.jquery.min.js',
-                'frontend/js/controla.js',
+
             ),
             'output_filename': 'js/base_js.js',
         },
@@ -176,6 +176,12 @@ PIPELINE = {
             ),
             'output_filename': 'js/plugins.js',
         },
+        'controla_js': {
+            'source_filenames': (
+                'frontend/js/controla.js',
+            ),
+            'output_filename': 'js/controla.js',
+        },
         'graphics_js': {
             'source_filenames': (
                 "d3/d3.min.js",
@@ -183,7 +189,7 @@ PIPELINE = {
                 'frontend/js/graphics.js',
             ),
             'output_filename': 'js/graphics.js',
-        }
+        },
     },
     'COMPILERS': (
         'pipeline.compilers.sass.SASSCompiler',

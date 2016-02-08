@@ -1,5 +1,5 @@
 {% extends "frontend/base.html" %}
-{% load bootstrap3 compress %}
+{% load bootstrap3 compress pipeline %}
 {% block navbar %}
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
@@ -67,6 +67,7 @@
 {% endblock %}
 {% block js %}
     {% compress js %}
+        {% javascript 'controla_js' %}
     <script type="text/javascript">
         (function($){
             $(document).ready(function(){
