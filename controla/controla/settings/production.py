@@ -64,13 +64,12 @@ PIPELINE.update({'PIPELINE_ENABLED': True})
 COMPRESS_ENABLED = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
 EMAIL_USE_TLS = False
 EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = 'matuu@localhost'
-# EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 25
-
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'Notificación <no-responder@apps.zille.com.ar>'
 
 try:  # import the local settings
     from .private import *  # noqa
