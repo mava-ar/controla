@@ -66,8 +66,8 @@
 </footer>
 {% endblock %}
 {% block js %}
+    {% javascript 'controla_js' %}
     {% compress js %}
-        {% javascript 'controla_js' %}
     <script type="text/javascript">
         (function($){
             $(document).ready(function(){

@@ -31,4 +31,5 @@ showConfirm = function(title, message, callback_yes, callback_no) {
             }
         }
     });
-}
+};
+
