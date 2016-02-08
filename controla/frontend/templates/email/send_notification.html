@@ -1,10 +1,9 @@
+{% extends "email/base_email.html" %}
+{% block content %}
 <h2>Alta de asistencia realizada</h2>
 <p>Esta es una constancia de que se ha enviado exitosamente la planilla de asistencia, cuyos datos se detallan a continuación:</p>
 <p>Proyecto: <strong>{{ object.proyecto }}</strong></p>
 <p>Fecha: <strong>{{ object.fecha }}</strong></p>
 <p>Responsable: <strong>{{ object.proyecto.responsable_rel.persona }}</strong></p>
 <p>Cantidad de registros: <strong>{{ object.items.count }}</strong></p>
-<br>
-<p>SISTEMA DE AUSENTISMO</p>
-<img src="http://apps.zille.com.ar/img/logo-zille.jpg" />
-
+{% endblock %}

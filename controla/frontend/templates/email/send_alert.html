@@ -1,5 +1,5 @@
-<html>
-<body>
+{% extends "email/base_email.html" %}
+{% block content %}
 <h2>Alerta de planillas de asistencias no enviadas</h2>
 <p>Estimado/a <strong>{{ responsable }}</strong>: </p>
 <p>Aún le restan por completar y enviar las planillas de asistencias de los siguientes proyectos:</p>
@@ -28,11 +28,5 @@
         {% endfor %}
     </tbody>
 </table>
+{% endblock %}
 
-<br>
-<p>SISTEMA DE AUSENTISMO</p>
-<img src="http://apps.zille.com.ar/img/logo-zille.jpg" />
-
-
-</body>
-</html>

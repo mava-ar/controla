@@ -1,3 +1,5 @@
+{% extends "email/base_email.html" %}
+{% block content %}
 <h2>Resumen de asistencias del día</h2>
 <p>Se adjuntan las constancias de las planillas de asistencias del día, cuyos datos se detallan a continuación:</p>
 
@@ -26,8 +28,5 @@
         {% endfor %}
     </tbody>
 </table>
-
-<br>
-<p>SISTEMA DE AUSENTISMO</p>
-<img src="http://apps.zille.com.ar/img/logo-zille.jpg" />
+{% endblock %}
 
