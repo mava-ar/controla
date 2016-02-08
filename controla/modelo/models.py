@@ -4,7 +4,7 @@ from django.conf import settings
 from simple_history.models import HistoricalRecords
 
 from dj_utils.models import BaseModel, BaseModelWithHistory
-from .managers import ProyectoManager, PersonaManager
+from .managers import ProyectoManager, PersonaManager, ProyectoConPersonasManager
 
 
 class Estado(BaseModelWithHistory):
@@ -42,6 +42,7 @@ class Proyecto(BaseModelWithHistory):
     history = HistoricalRecords()
 
     objects = ProyectoManager()
+    con_personas = ProyectoConPersonasManager()
     all_proyects = models.Manager()
 
     class Meta:

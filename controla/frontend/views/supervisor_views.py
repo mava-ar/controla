@@ -101,7 +101,7 @@ class VerProyectosAjaxView(SupervisorViewMixin, TemplateView):
         data = super(VerProyectosAjaxView, self).get_context_data(**kwargs)
         pk = self.request.GET.get('pk', None)
         if pk:
-            data["proyectos"] = Proyecto.objects.filter(responsable_rel__persona_id=pk).all()
+            data["proyectos"] = Proyecto.con_personas.filter(responsable_rel__persona_id=pk).all()
             hoy = datetime.now()
             data["asistencia_dia"] = list(Asistencia.objects.filter(
                     proyecto__in=data["proyectos"], fecha=hoy).values_list('proyecto__pk', flat=True))

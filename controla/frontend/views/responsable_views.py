@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from frontend.views.base import (BaseReasignarPersonalView, BaseAltaAsistenciaView, BaseDetailAsistenciaView,
                                  BaseNotificacionesView)
 from frontend.views.mixins import ResponsableViewMixin
-from modelo.models import Persona, Asistencia
+from modelo.models import Persona, Asistencia, Proyecto
 
 
 class IndexProyect(ResponsableViewMixin, TemplateView):
@@ -16,7 +16,8 @@ class IndexProyect(ResponsableViewMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(IndexProyect, self).get_context_data(**kwargs)
         try:
-            data["proyectos"] = [x.proyecto for x in self.request.user.persona.get().responsable_rel.all()]
+            proyectos = [x.proyecto_id for x in self.request.user.persona.get().responsable_rel.all()]
+            data["proyectos"] = Proyecto.con_personas.filter(id__in=proyectos)
             hoy = datetime.now()
             data["asistencia_dia"] = list(Asistencia.objects.filter(
                     proyecto__in=data["proyectos"], fecha=hoy).values_list('proyecto__pk', flat=True))
