@@ -14,10 +14,15 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views
+
+from frontend.views.base import logout
 
 
 urlpatterns = [
     url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^admin/logout/', logout, name='logout'),
+    url(r'^admin/login/$', views.login, {'template_name': 'auth/login.html'}, name='login'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('frontend.urls')),
 ]
