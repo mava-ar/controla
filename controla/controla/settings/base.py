@@ -198,6 +198,7 @@ PIPELINE = {
     'SASS_ARGUMENTS': PIPELINE_SASS_ARGUMENTS,
     'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
+    'DISABLE_WRAPPER': True
 }
 
 # django-compressor settings
