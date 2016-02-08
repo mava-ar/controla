@@ -5,7 +5,8 @@ from celery import Celery
 from django.conf import settings
 
 # set the default Django settings module for the 'celery' program.
-if settings.DEBUG:
+import os.path
+if os.path.isfile('settings/local.py'):
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'controla.settings.local')
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'controla.settings.production')
