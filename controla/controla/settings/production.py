@@ -17,7 +17,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': normpath(join(SITE_ROOT, '../../logs/django-debug.log')),
         },
