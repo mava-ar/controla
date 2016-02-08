@@ -1,0 +1,39 @@
+{% load static %}
+<html>
+<body>
+<h2>Alerta de planillas de asistencias no enviadas</h2>
+<p>Estimado/a <strong>{{ responsable }}</strong>: </p>
+<p>Aún le restan por completar y enviar las planillas de asistencias de los siguientes proyectos:</p>
+<table width="100%">
+    <thead>
+    <tr style="background-color: #1b3249;color:#fff">
+        <th colspan="2">
+            {% now "d/m/Y" %}
+        </th>
+    </tr>
+    <tr style="background-color: #1b3249;color:#fff">
+        <th style="width: 50%">Proyecto</th>
+        <th style="width: 50%">Cantidad de personas</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for x in proyectos %}
+            <tr>
+            <td>
+                {{ x.nombre }}
+            </td>
+            <td>
+                {{ x.personas_involucradas.count }}
+            </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<p>SISTEMA DE AUSENTISMO</p>
+<img src="{% static 'frontend/img/logo-zille.png' %}" />
+
+
+</body>
+</html>

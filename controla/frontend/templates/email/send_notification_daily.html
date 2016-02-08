@@ -1,0 +1,34 @@
+{% load static %}
+<h2>Resumen de asistencias del día</h2>
+<p>Se adjuntan las constancias de las planillas de asistencias del día, cuyos datos se detallan a continuación:</p>
+
+<table width="100%">
+    <thead>
+    <tr style="background-color: #1b3249;color:#fff">
+        <th colspan="2">
+            {% now "d/m/Y" %}
+        </th>
+    </tr>
+    <tr style="background-color: #1b3249;color:#fff">
+        <th style="width: 50%">Proyecto</th>
+        <th style="width: 50%">Cantidad de registros</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for x in proyectos %}
+            <tr>
+            <td>
+                {{ x.proyecto }}
+            </td>
+            <td>
+                {{ x.items.count }}
+            </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<p>SISTEMA DE AUSENTISMO</p>
+<img src="{% static 'frontend/img/logo-zille.png' %}" />
+

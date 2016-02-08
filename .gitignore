@@ -151,3 +151,10 @@ components/*
 media/*.
 collected_static/*
 doc/*
+
+# clery
+celerybeat.pid
+celerybeat-schedule
+
+fabfile.py
+bkp-dbs/*

@@ -10,6 +10,9 @@ django-pipeline>=1.5.4
 django-bootstrap3>=6.2.2
 django-libsass
 libsass>=0.9.3
-django-autocomplete-light
+django-autocomplete-light==2.3.2
 django-suit
-django-celery-email
+django-mailer==1.1.0
+reportlab
+celery==3.1.20
+redis==2.10.5

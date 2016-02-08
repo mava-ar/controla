@@ -105,7 +105,7 @@ class BaseAltaAsistenciaView(CreateView):
     def get_details_asistencia_url(self, pk):
         raise NotImplementedError
 
-    def get(self, request, *args, **kwargs):
+    def checks_exists(self, **kwargs):
         # averiguo si ya tomo la asistencia hoy
         asistencia = Asistencia.objects.filter(proyecto=kwargs.get(self.pk_url_kwarg), fecha=datetime.now())
         if asistencia:
@@ -113,6 +113,11 @@ class BaseAltaAsistenciaView(CreateView):
                                  "Mostrardo la asistencia para el día de la fecha.")
             # muestro la asistencia del día
             return HttpResponseRedirect(self.get_details_asistencia_url(asistencia[0].pk))
+
+    def get(self, request, *args, **kwargs):
+        redirect = self.checks_exists(**kwargs)
+        if redirect:
+            return redirect
         return super(BaseAltaAsistenciaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -145,6 +150,9 @@ class BaseAltaAsistenciaView(CreateView):
         return kwargs
 
     def post(self, request, *args, **kwargs):
+        redirect = self.checks_exists(**kwargs)
+        if redirect:
+            return redirect
         self.object = None
         form = self.get_form()
         formsets = RegistroAsistenciaFormSet(self.request.POST)

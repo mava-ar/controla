@@ -30,3 +30,10 @@ COMPRESS_ENABLED = False
 DEBUG_TOOLBAR_CONFIG = {
     'JQUERY_URL': 'http://127.0.0.1:8000/static/jquery/dist/jquery.js',
 }
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = ''

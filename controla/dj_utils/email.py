@@ -6,7 +6,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import get_language, activate
 
 
-
 def send_html_mail(subject, template_name, dictionary, from_email=None,
                    to=None, cc=None, bcc=None, fail_silently=False,
                    request=None, css_files=None, lang=None, attachments=[]):

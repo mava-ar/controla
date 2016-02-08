@@ -16,7 +16,10 @@ class MyUserAdmin(UserAdmin, SimpleHistoryAdmin):
     form = MyUserChangeForm
     fieldsets = (
         (None, {
-            'fields': ('rol', 'cambia_personal', 'notificar_alta_individual')
+            'fields': ('rol', 'cambia_personal')
+        }),
+        ("Notificaciones", {
+            'fields': ('notificar_alta_individual', 'notificar_alta_diario', 'alertar_faltantes')
         }),
     ) + UserAdmin.fieldsets
 
