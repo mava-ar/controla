@@ -24,9 +24,14 @@
                         {% endwith %}
 
                     {% endif %}
+                    {% with ""|add:request.current_app|add:":ver_asistencia_fecha" as url1 %}
+                        <li class="{% block ver_asistencia_act %}{% endblock %}">
+                            <a href="{% url url1 %}">Asistencias</a></li>
+                    {% endwith %}
                     {% if request.user.is_superuser or request.user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">Administración</a></li>
                     {% endif %}
+
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

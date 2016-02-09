@@ -10,12 +10,14 @@ from django.core.mail import send_mail, EmailMessage
 from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
 from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView,
-                                 BaseAltaAsistenciaView, BaseNotificacionesView)
+                                 BaseAltaAsistenciaView, BaseNotificacionesView, BaseVerAsistenciaAjaxView,
+                                 BaseVerAsistenciaByDate)
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona)
 from frontend.excel import ExportToExcel
 from frontend.reports import PdfPrintAltaAsistencia
+from frontend.forms import VerAsistenciaForm
 
 
 class DashboardView(SupervisorViewMixin, TemplateView):
@@ -145,6 +147,14 @@ class NotificacionesView(SupervisorViewMixin, BaseNotificacionesView):
     pass
 
 
+class VerAsistenciaByDate(SupervisorViewMixin, BaseVerAsistenciaByDate):
+    pass
+
+
+class VerAsistenciaAjaxView(SupervisorViewMixin, BaseVerAsistenciaAjaxView):
+    pass
+
+
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
@@ -157,3 +167,6 @@ alta_asistencia = AltaAsistenciaView.as_view()
 ver_asistencia = DetailAsistenciaView.as_view()
 export_asistencia_pdf = Export2PDFView.as_view()
 update_notification = NotificacionesView.as_view()
+ver_asistencia_fecha = VerAsistenciaByDate.as_view()
+ver_asistencia_ajax = VerAsistenciaAjaxView.as_view()
+

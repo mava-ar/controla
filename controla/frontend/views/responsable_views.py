@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from frontend.views.base import (BaseReasignarPersonalView, BaseAltaAsistenciaView, BaseDetailAsistenciaView,
-                                 BaseNotificacionesView)
+                                 BaseNotificacionesView, BaseVerAsistenciaAjaxView, BaseVerAsistenciaByDate)
 from frontend.views.mixins import ResponsableViewMixin
 from modelo.models import Persona, Asistencia, Proyecto
 
@@ -57,8 +57,24 @@ class NotificacionesView(ResponsableViewMixin, BaseNotificacionesView):
     pass
 
 
+class VerAsistenciaByDate(ResponsableViewMixin, BaseVerAsistenciaByDate):
+
+    def get_queryset(self):
+        try:
+            return Proyecto.objects.filter(responsable_rel__persona_id=self.request.user.persona.first().pk)
+        except:
+            return Proyecto.objects.none()
+
+
+class VerAsistenciaAjaxView(ResponsableViewMixin, BaseVerAsistenciaAjaxView):
+    pass
+
+
 index = IndexProyect.as_view()
 alta_asistencia = AltaAsistenciaView.as_view()
 ver_asistencia = DetailAsistenciaView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 update_notification = NotificacionesView.as_view()
+ver_asistencia_fecha = VerAsistenciaByDate.as_view()
+ver_asistencia_ajax = VerAsistenciaAjaxView.as_view()
+

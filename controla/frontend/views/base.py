@@ -11,7 +11,8 @@ from django.views.generic import RedirectView, TemplateView, CreateView, DetailV
 
 from dj_utils.dates import get_30_days, format_date
 from dj_utils.views import AuthenticatedMixin
-from frontend.forms import ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet, NotificacionUserForm
+from frontend.forms import (ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet,
+                            NotificacionUserForm, VerAsistenciaForm)
 from frontend.notifications import send_notification
 from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona
 from users.models import User
@@ -219,6 +220,36 @@ class BaseNotificacionesView(AuthenticatedMixin, UpdateView):
         self.object.save()
         messages.add_message(self.request, messages.SUCCESS, "Configuración de notificaciones actualizada correctamente.")
         return HttpResponseRedirect(reverse('index'))
+
+
+class BaseVerAsistenciaByDate(TemplateView):
+    template_name = 'frontend/ver_asistencia_fecha.html'
+
+    def get_queryset(self):
+        return Proyecto.objects.all()
+
+    def get_context_data(self, **kwargs):
+        data = super(BaseVerAsistenciaByDate, self).get_context_data(**kwargs)
+        data["proyectos"] = self.get_queryset()
+        data["fecha"] = datetime.now().strftime("%d/%m/%Y")
+        return data
+
+
+class BaseVerAsistenciaAjaxView(TemplateView):
+    template_name = "frontend/includes/_table_asistencia.html"
+
+    def get(self, request, *args, **kwargs):
+        form = VerAsistenciaForm(self.request.GET)
+        data = self.get_context_data()
+        try:
+            form.is_valid()
+            proy = form.cleaned_data["proyecto"]
+            fecha = form.cleaned_data["fecha"]
+            data["object"] = Asistencia.objects.get(
+                proyecto=proy, fecha=fecha)
+        except Asistencia.DoesNotExist:
+            data["object"] = None
+        return self.render_to_response(data)
 
 
 index = RedirectRolView.as_view()

@@ -1,0 +1,62 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags compress %}
+{% block wide_class %}container{% endblock %}
+{% block ver_asistencia_act %}active{% endblock %}
+{%  block title %}
+    <h2 class="main-title">Ver datos de asistencia</h2>
+{% endblock %}
+{% block content %}
+     <form method="get" id="ver_asistencia_form">
+        <div class="row well">
+            <div class="col-sm-5">
+                <label for="id_proyecto" class="control-label">Proyecto: </label>
+                <select name="proyecto" id="id_proyecto"  class="form-control">
+                    <option value="">Seleccione un proyecto</option>
+                    {% for p in proyectos %}
+                        <option value="{{ p.pk }}">{{p.nombre }}</option>
+                    {% endfor %}
+                    </select>
+            </div>
+
+            <div class="col-sm-5">
+                <label for="id_fecha" class="control-label">Fecha: </label>
+                <input type="date" name="fecha" id="id_fecha" value="{{ fecha }}" class="block input-small"/>
+            </div>
+            <div class="col-sm-2">
+                <a class="submit btn btn-primary" id="btn-submit">Visualizar</a>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div id="content-asistencia" class="container">
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {% compress js %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $("#id_fecha").datepicker({
+                    format: 'dd/mm/yyyy',
+                    language: 'es'
+                });
+                $("#id_proyecto").chosen({'search_contains':true});
+                $("#btn-submit").click(function(e){
+                    e.preventDefault();
+                    var id = $("#id_proyecto").val();
+                    if(id!=""){
+                        {% with ""|add:request.current_app|add:":ver_asistencia_ajax" as url1 %}
+                            $("#content-asistencia").load('{% url url1 %}' + '?' + $("#ver_asistencia_form").serialize());
+                        {% endwith %}
+                    } else {
+                        $("#content-asistencia").html("");
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

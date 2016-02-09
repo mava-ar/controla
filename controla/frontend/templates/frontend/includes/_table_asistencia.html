@@ -1,0 +1,40 @@
+{% if object %}
+    <div class="row well">
+        <div class="col-sm-9 ">
+            <h3>Proyecto: <strong>{{ object.proyecto }}</strong></h3>
+            <h3>Fecha: <strong>{{ object.fecha }}</strong></h3>
+        </div>
+        {% if request.user.is_supervisor %}
+        <div class="col-sm-3">
+            <a class="btn btn-default"
+           href="{% url 'supervisor_frontend:export_asistencia_pdf' object.pk %}">Exportar a PDF</a>
+            <a class="btn btn-primary"
+               href="{% url 'admin:modelo_asistencia_change' object.pk %}" target="_blank">Editar</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th colspan="2">Estado de asistencia</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for r in object.items.all %}
+        <tr>
+            <td>{{ r.persona }}</td>
+            <td>{{ r.estado.codigo }}</td>
+            <td>{{ r.estado.situacion }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <div class="alert alert-danger">
+    No se encontró datos de asistencia para el proyecto y fecha seleccionados.
+    </div>
+{% endif %}
