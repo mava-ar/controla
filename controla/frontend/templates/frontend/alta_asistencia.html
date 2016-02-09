@@ -8,17 +8,36 @@
 
     <form action="." method="post" id="asistencia_form">
     <div class="row">
-        <div class="col-sm-6"><h3>Proyecto: <strong>{{ proyecto }}</strong></h3></div>
-        <div class="col-sm-6"><h3>Fecha: <strong>{% now "d/m/Y" %}</strong></h3></div>
-        {% if request.user.is_supervisor %}
-            <div class="col-sm-6"><h3>Reponsable: <strong>{{ proyecto.responsable_rel.persona }}</strong></h3></div>
-        {% endif %}
-    </div>
 
+        {% if request.user.is_supervisor %}
+            <div class="col-sm-6">
+                {% bootstrap_field form.proyecto %}
+                <h3>Proyecto: <strong>{{ proyecto }}</strong></h3>
+                <h3>Reponsable: <strong>{{ proyecto.responsable_rel.persona }}</strong></h3>
+            </div>
+            <div class="col-sm-6">
+                <h3>
+                {% bootstrap_field form.fecha layout='horizontal' horizontal_label_class='col-sm-2' size='small' %}
+                </h3>
+            </div>
+        {% else %}
+            <div class="col-sm-6">
+                {% bootstrap_field form.proyecto %}
+                <h3>Proyecto: <strong>{{ proyecto }}</strong></h3>
+            </div>
+            <div class="col-sm-6"><h3>
+                Fecha: <strong>{% now "d/m/Y" %}</strong>
+            </h3></div>
+                <div style="display: none;">
+                    {% bootstrap_field form.fecha %}
+                </div>
+        {% endif %}
+
+    </div>
+    {% bootstrap_form_errors form type='non_fields' layout='inline' %}
         {% csrf_token %}
         {{ formsets.management_form }}
         {{ formsets.non_form_errors }}
-        {% bootstrap_form form %}
 
         <table class="table table-striped">
         <thead>
@@ -56,7 +75,10 @@
     <script type="text/javascript">
         (function($) {
             $(document).ready(function(){
-                //$("#asistencia_form select").chosen();
+                $("#id_fecha").datepicker({
+                    format: 'dd/mm/yyyy',
+                    language: 'es'
+                });
 
                 $("#btn-submit").click(function(e){
                     e.preventDefault();

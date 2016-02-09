@@ -148,6 +148,7 @@ class BaseAltaAsistenciaView(CreateView):
         kwargs = super(BaseAltaAsistenciaView, self).get_form_kwargs(**kwargs)
         self.proyecto = Proyecto.objects.get(pk=self.kwargs.get(self.pk_url_kwarg))
         kwargs['initial']['proyecto'] =  self.proyecto
+        kwargs['initial']['fecha'] = datetime.now().strftime("%d/%m/%Y")
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -170,7 +171,8 @@ class BaseAltaAsistenciaView(CreateView):
         try:
             with atomic():
                 self.object = form.save(commit=False)
-                self.object.fecha = datetime.now()
+                if not self.request.user.is_supervisor:
+                    self.object.fecha = datetime.now()
                 self.object.save()
                 for f in formsets:
                     reg = RegistroAsistencia()
