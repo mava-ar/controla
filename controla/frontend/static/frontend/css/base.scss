@@ -24,6 +24,11 @@ footer {
   height: 60px;
   padding: 20px 0;
   text-align: center;
+
+  a, a:hover {
+    color: #401833;
+    font-weight:700;
+  }
 }
 
 form {
