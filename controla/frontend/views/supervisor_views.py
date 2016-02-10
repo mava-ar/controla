@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
-from io import BytesIO
 
 from django.contrib import messages
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.core.mail import send_mail, EmailMessage
 
 from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
@@ -14,10 +12,9 @@ from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, Base
                                  BaseVerAsistenciaByDate)
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
-                            get_datos_porcentuales, get_asistencia_persona)
+                            get_datos_porcentuales, get_asistencia_persona, get_proyectos_estados)
 from frontend.excel import ExportToExcel
 from frontend.reports import PdfPrintAltaAsistencia
-from frontend.forms import VerAsistenciaForm
 
 
 class DashboardView(SupervisorViewMixin, TemplateView):
@@ -30,6 +27,7 @@ class DashboardView(SupervisorViewMixin, TemplateView):
         data["perc_asis_persona"] = porcentaje_asistencia_persona()
         hoy = datetime.now()
         data["graf_evolucion"], data["table_evolucion"] = evolucion_registros_asistencia(hoy + timedelta(-7), hoy)
+        data["proyectos_estados"] = get_proyectos_estados()
         return data
 
 

@@ -2,17 +2,24 @@ import calendar
 from collections import defaultdict
 from datetime import datetime, timedelta
 
-from django.db.models import Count
+from django.db.models import Count, Case, When
 
 from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado
 
 
+def get_proyectos_estados(hoy=datetime.now()):
+    data = list(Proyecto.con_personas.annotate(
+        ok=Count(Case(When(asistencias__fecha=hoy, then=1)))).values_list(
+        'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
+    return data
+
+
 def porcentaje_asistencia_proyecto(hoy=datetime.now()):
-    total = Proyecto.objects.count()
+    total = Proyecto.con_personas.count()
     if total == 0:
         return 0
 
-    perc = Proyecto.objects.filter(asistencias__fecha=hoy).count()
+    perc = Proyecto.con_personas.filter(asistencias__fecha=hoy).count()
     return "{}".format(int(perc * 100 / total))
 
 

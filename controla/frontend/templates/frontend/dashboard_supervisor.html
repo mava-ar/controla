@@ -81,6 +81,37 @@
             </div>
         </div>
     </div>
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Presentación de asistencias por proyectos
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Proyectos</th>
+                                <th>Responsables</th>
+                                <th>Personas en el proyecto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for x in proyectos_estados %}
+                            <tr class="{% if x.3 > 0 %}success{% else %}danger{% endif %}">
+                                <td>{{ x.0 }}</td>
+                                <td>{{ x.1 }}, {{ x.2 }}</td>
+                                <td>{% if x.3 > 0 %}{{ x.3 }}{% else %}--{% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 {% block extra_js %}
     {% compress js %}

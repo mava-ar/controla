@@ -14,7 +14,7 @@ from dj_utils.email import send_html_mail
 logger = get_task_logger(__name__)
 
 
-@periodic_task(run_every=timedelta(seconds=30))
+@periodic_task(run_every=timedelta(seconds=60))
 def email_tasks():
     # Chequea nuevos email en la cola
     send_all()
@@ -30,7 +30,7 @@ def send_email_alert():
         realizados = Asistencia.objects.filter(
             fecha=hoy,
             proyecto__responsable_rel__persona_id=pers_pk).values_list("proyecto", flat=True)
-        pendiente = Proyecto.objects.filter(responsable_rel__persona_id=pers_pk).exclude(id__in=realizados)
+        pendiente = Proyecto.con_personas.filter(responsable_rel__persona_id=pers_pk).exclude(id__in=realizados)
         try:
             if persona.usuario.email and persona.usuario.alertar_faltantes and pendiente:
                 send_html_mail(subject="{} - Alerta de asistencia faltante".format(persona),
