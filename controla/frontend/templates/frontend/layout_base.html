@@ -17,17 +17,20 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li class="{% block index_act %}active{% endblock %}"><a href="{% url 'index' %}">Inicio</a></li>
-
-                    {% if request.user.cambia_personal %}
-                        {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
-                            <li class="{% block reasignar_act %}{% endblock %}"><a href="{% url url1 %}">Reasignar personal</a></li>
-                        {% endwith %}
-
-                    {% endif %}
                     {% with ""|add:request.current_app|add:":ver_asistencia_fecha" as url1 %}
                         <li class="{% block ver_asistencia_act %}{% endblock %}">
                             <a href="{% url url1 %}">Asistencias</a></li>
                     {% endwith %}
+                    {% if request.user.cambia_personal %}
+                        {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
+                            <li class="{% block reasignar_act %}{% endblock %}"><a href="{% url url1 %}">Reasignar personal</a></li>
+                        {% endwith %}
+                    {% endif %}
+                    {% if request.user.is_supervisor %}
+                        <li class="{% block baja_persona_act %}{% endblock %}">
+                            <a href="{% url 'supervisor_frontend:baja_personal' %}">Movimiento de personal</a>
+                        </li>
+                    {%  endif %}
                     {% if request.user.is_superuser or request.user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">Administración</a></li>
                     {% endif %}

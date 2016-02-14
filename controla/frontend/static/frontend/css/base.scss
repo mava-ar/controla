@@ -83,3 +83,12 @@ form {
     background-color: #b7b7b7;
   }
 }
+
+#id_personas_chosen {
+  .chosen-choices {
+    min-height: 46px !important;
+    padding: 10px 16px 8px;
+    border: 1px solid #DFD7CA;
+    border-radius: 4px;
+  }
+}

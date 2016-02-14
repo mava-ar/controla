@@ -34,7 +34,7 @@ class Command(BaseCommand):
                     self.fecha = None
                     continue
                 self.fecha = timezone.make_aware(self.fecha)
-                pers_filt = Persona.objects.filter(legajo=row[0])
+                pers_filt = Persona.all_persons.filter(legajo=row[0])
                 proyecto = None
                 if pers_filt:
                     persona = pers_filt[0]
@@ -94,7 +94,7 @@ class Command(BaseCommand):
         nom_list = row[6].split(' ')
         if nom_list[0].startswith("Olivo"):
             nom_list[0] = "Olivo"
-        persona = Persona.objects.filter(
+        persona = Persona.all_persons.filter(
             apellido=nom_list[0], nombre__icontains=nom_list[1])
         if persona:
             try:
@@ -114,7 +114,7 @@ class Command(BaseCommand):
             return p
         else:
             try:
-                p = Proyecto.objects.get(nombre=nombre.strip())
+                p = Proyecto.all_proyects.get(nombre=nombre.strip())
             except Proyecto.DoesNotExist:
                 p = Proyecto(nombre=nombre.strip())
                 p._history_date = self.fecha

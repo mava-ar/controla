@@ -8,13 +8,14 @@ from django.db import IntegrityError
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.views.generic import RedirectView, TemplateView, CreateView, DetailView, UpdateView
+from django.utils import timezone
 
 from dj_utils.dates import get_30_days, format_date
 from dj_utils.views import AuthenticatedMixin
 from frontend.forms import (ReasignarPersonalForm, AltaAsistenciaForm, RegistroAsistenciaFormSet,
-                            NotificacionUserForm, VerAsistenciaForm)
+                            NotificacionUserForm, VerAsistenciaForm, BajaPersonalForm, AltaPersonalForm, )
 from frontend.notifications import send_notification
-from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona
+from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona, MovimientoPersona
 from users.models import User
 from .mixins import SupervisorViewMixin
 
@@ -35,6 +36,65 @@ class RedirectRolView(AuthenticatedMixin, RedirectView):
                 'supervisor_frontend:index',
 
             )
+
+
+class BaseBajaPersonalView(AuthenticatedMixin, TemplateView):
+    template_name = 'frontend/baja_personal.html'
+
+    def get_context_data(self, **kwargs):
+        data = super(BaseBajaPersonalView, self).get_context_data(**kwargs)
+        if kwargs.get("form_baja", None) is None:
+            data["form_baja"] = BajaPersonalForm()
+        if kwargs.get('form_alta', None) is None:
+            data["form_alta"] = AltaPersonalForm()
+
+        data["ultimas_bajas"] = MovimientoPersona.objects.filter(
+            situacion=MovimientoPersona.SITUACION_BAJA).order_by('-fechahora')[:10]
+        data["ultimas_altas"] = MovimientoPersona.objects.filter(
+            situacion=MovimientoPersona.SITUACION_ALTA).order_by('-fechahora')[:10]
+        return data
+
+    def post(self, request, *args, **kwargs):
+        sit = request.POST.get('situacion', None)
+        if sit:
+            if sit == '1':
+                a_form = AltaPersonalForm(self.request.POST)
+                if a_form.is_valid():
+                    return self.form_valid(a_form)
+                else:
+                    return self.form_invalid(form_alta=a_form)
+            elif sit == '2':
+                b_form = BajaPersonalForm(self.request.POST)
+                if b_form.is_valid():
+                    return self.form_valid(b_form)
+                else:
+                    return self.form_invalid(form_baja=b_form)
+            else:
+                return self.form_invalid()
+
+    def form_invalid(self, form_alta=None, form_baja=None):
+        return self.render_to_response(
+            self.get_context_data(form_alta=form_alta, form_baja=form_baja))
+
+    def form_valid(self, form):
+        personas = form.cleaned_data["personas"]
+        if isinstance(form, BajaPersonalForm):
+            situacion = MovimientoPersona.SITUACION_BAJA
+            method_generar = MovimientoPersona.generar_baja
+        else:
+            situacion = MovimientoPersona.SITUACION_ALTA
+            method_generar = MovimientoPersona.generar_alta
+        for p in personas:
+            method_generar(persona=p, fecha=timezone.now(), usuario=self.request.user)
+
+        messages.add_message(self.request, messages.SUCCESS,
+                             "Las siguientes personas fueron dadas de {}: {}".format(
+                                 "baja" if situacion == MovimientoPersona.SITUACION_BAJA else "alta",
+                                 ", ".join([str(x) for x in personas])))
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        raise NotImplemented
 
 
 class BaseReasignarPersonalView(AuthenticatedMixin, TemplateView):

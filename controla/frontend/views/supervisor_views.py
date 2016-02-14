@@ -9,7 +9,7 @@ from modelo.models import Responsable, Asistencia, Proyecto
 from frontend.views.mixins import SupervisorViewMixin
 from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView,
                                  BaseAltaAsistenciaView, BaseNotificacionesView, BaseVerAsistenciaAjaxView,
-                                 BaseVerAsistenciaByDate)
+                                 BaseVerAsistenciaByDate, BaseBajaPersonalView)
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona, get_proyectos_estados)
@@ -53,6 +53,12 @@ class ReasignarPersonalView(SupervisorViewMixin, BaseReasignarPersonalView):
 
     def get_success_url(self):
         return reverse_lazy('supervisor_frontend:reasignar_personal')
+
+
+class BajaPersonalView(SupervisorViewMixin, BaseBajaPersonalView):
+
+    def get_success_url(self):
+        return reverse_lazy('supervisor_frontend:baja_personal')
 
 
 class ExportDatosPorcentualesView(BaseReportView, TemplateView):
@@ -155,6 +161,7 @@ class VerAsistenciaAjaxView(SupervisorViewMixin, BaseVerAsistenciaAjaxView):
 
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
+baja_personal = BajaPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
 asistencia_persona = AsistenciaPorPersonaView.as_view()
 export_porcentual = ExportDatosPorcentualesView.as_view()

@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from autocomplete_light import ModelChoiceField
 
-from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona, Estado
+from modelo.models import Asistencia, RegistroAsistencia, Proyecto, Persona, Estado, MovimientoPersona
 from users.models import User
 
 
@@ -53,3 +53,17 @@ class VerAsistenciaForm(forms.Form):
 
     class Meta:
         fields = ('proyecto', 'fecha')
+
+
+class BajaPersonalForm(forms.Form):
+
+    personas = forms.ModelMultipleChoiceField(Persona.objects.all())
+    situacion = forms.ChoiceField(choices=(MovimientoPersona.TIPO_SITUACION[1], ),
+                                  widget=forms.HiddenInput(), initial=MovimientoPersona.SITUACION_BAJA)
+
+
+class AltaPersonalForm(forms.Form):
+
+    personas = forms.ModelMultipleChoiceField(Persona.all_persons.filter(fecha_baja__isnull=False))
+    situacion = forms.ChoiceField(choices=(MovimientoPersona.TIPO_SITUACION[0], ),
+                                  widget=forms.HiddenInput(), initial=MovimientoPersona.SITUACION_ALTA)

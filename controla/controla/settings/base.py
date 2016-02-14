@@ -223,6 +223,7 @@ BOWER_INSTALLED_APPS = (
 )
 
 ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO
+ESTADO_BAJA = ['B']
 
 SUIT_CONFIG = {
     'ADMIN_NAME': 'ZILLE - RRHH',
@@ -243,3 +244,11 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
+# Default settings
+BOOTSTRAP3 = {
+     # Label class to use in horizontal forms
+    'horizontal_label_class': 'col-sm-2',
+
+    # Field class to use in horizontal forms
+    'horizontal_field_class': 'col-sm-10',
+}

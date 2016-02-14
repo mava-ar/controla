@@ -1,0 +1,131 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags compress %}
+{% block index_act %}{% endblock %}
+{% block baja_persona_act %}active{% endblock %}
+{%  block title %}
+    <h2 class="main-title">Alta y baja de personal
+        <a class="pull-right btn btn-success" href="{% url 'admin:modelo_persona_add' %}">Alta de persona</a>
+    </h2>
+{% endblock %}
+{% block wide_class %}container{% endblock %}
+{% block content %}
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+           Baja de personal
+        </div>
+        <div class="panel-body">
+        <form action="." method="post" id="baja-form">
+            {% csrf_token %}
+
+            <div class="row reasignar">
+
+                <div class="col-sm-9 baja">
+                    {% bootstrap_field form_baja.personas layout='horizontal' %}
+                    {% bootstrap_field form_baja.situacion %}
+                </div>
+                <div class="col-sm-3">
+                    <input type="submit" value="Procesar la baja" class="submit btn btn-danger" data-rel="#baja-form"/>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+           Reincorporación de personal
+        </div>
+        <div class="panel-body">
+        <form action="." method="post" id="alta-form">
+            {% csrf_token %}
+
+            <div class="row reasignar">
+
+                <div class="col-sm-9 alta">
+                    {% bootstrap_field form_alta.personas layout='horizontal' %}
+                    {% bootstrap_field form_alta.situacion %}
+                </div>
+                <div class="col-sm-3">
+                    <input type="submit" value="Procesar el alta" class="submit btn btn-primary" data-rel="#alta-form"/>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="col-sm-6">
+        <h2>Últimas bajas</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Persona</th>
+                    <th>Fecha</th>
+                    <th>Realizado por</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for bajas in ultimas_bajas.all %}
+                <tr>
+                <td>{{ bajas.persona }}</td>
+                <td>{{ bajas.fechahora|date:'d/m/Y H:i' }}</td>
+                <td>{% if bajas.usuario %}{{ bajas.usuario }}{% else %}--{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-6">
+        <h2>Últimas incorporaciones</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Persona</th>
+                    <th>Fecha</th>
+                    <th>Realizado por</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for altas in ultimas_altas.all %}
+                <tr>
+                <td>{{ altas.persona }}</td>
+                <td>{{ altas.fechahora|date:'d/m/Y H:i' }}</td>
+                <td>{% if altas.usuario %}{{ altas.usuario }}{% else %}--{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {% compress js %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+                $(".alta select, .baja select").attr('data-placeholder', 'Seleccione el personal');
+                $("input.submit").click(function(e){
+                    e.preventDefault();
+                    var msg = "";
+                    var id_form = $(this).data("rel");
+                    if (id_form == "#alta-form"){
+                        msg = 'Está a punto de dar de <b>alta</b> las personas seleccionadas. ¿Desea continuar?';
+
+                    } else {
+                        msg = 'Está a punto de dar de <b>baja</b> las personas seleccionadas. ¿Desea continuar?';
+                    }
+                    showConfirm(
+                        'Movimiento de personal', msg, function(){$(id_form).submit();}
+                    );
+                });
+
+                $(".alta select, .baja select").chosen({
+                    'search_contains':true,
+                    'no_results_text': "No se encontraron coicidencias!",
+                });
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

@@ -1,6 +1,9 @@
 from django.db import models
-from django.db.models.fields import related
+from django.db.models.signals import post_save
 from django.conf import settings
+from django.utils import timezone
+from django.core.cache import cache
+
 from simple_history.models import HistoricalRecords
 
 from dj_utils.models import BaseModel, BaseModelWithHistory
@@ -113,8 +116,9 @@ class Persona(BaseModelWithHistory):
     cct = models.ForeignKey(CCT, verbose_name="CCT", related_name="personas")
     proyecto = models.ForeignKey(Proyecto, verbose_name="proyecto",
                                  related_name="personas_involucradas")
-    usuario = models.ForeignKey('users.User', verbose_name="Usuario", null=True, blank=True, related_name="persona",
-                                help_text="Al asociar un usuario a la persona, este puede ingresar al sistema.")
+    usuario = models.OneToOneField(
+        'users.User', unique=True, verbose_name="Usuario", null=True, blank=True, related_name="persona",
+        help_text="Al asociar un usuario a la persona, este puede ingresar al sistema.")
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
     history = HistoricalRecords()
 
@@ -201,4 +205,58 @@ class RegistroAsistencia(BaseModelWithHistory):
 
     def save(self, *args, **kwargs):
         self.codigo_estado = self.estado.codigo
+        try:
+            usuario = self.asistencia.proyecto.responsable_rel.persona.usuario
+        except AttributeError:
+            usuario = None
+        if self.estado.codigo in settings.ESTADO_BAJA:
+            MovimientoPersona.generar_baja(self.persona, fecha=self.asistencia.fecha, usuario=usuario)
+        elif not self.persona.fecha_baja is None:
+            MovimientoPersona.generar_alta(self.persona, fecha=self.asistencia.fecha, usuario=usuario)
         super(RegistroAsistencia, self).save(*args, **kwargs)
+
+
+class MovimientoPersona(BaseModel):
+    SITUACION_ALTA = 1
+    SITUACION_BAJA = 2
+
+    TIPO_SITUACION = (
+        (SITUACION_ALTA, "ALTA"),
+        (SITUACION_BAJA, "BAJA"),
+    )
+    persona = models.ForeignKey(Persona)
+    situacion = models.SmallIntegerField(verbose_name="situacion", choices=TIPO_SITUACION, default=1)
+    fechahora = models.DateTimeField(verbose_name="fecha y hora")
+    usuario = models.ForeignKey('users.User', verbose_name="realizado por", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "movimiento de persona"
+        verbose_name_plural = "movimiento de personas"
+
+    @classmethod
+    def _generar_movimiento(cls, persona, tipo, fecha, usuario=None):
+        movimiento = MovimientoPersona(persona=persona, situacion=tipo, fechahora=fecha)
+        if usuario:
+           movimiento.usuario = usuario
+        movimiento.save()
+        if tipo == cls.SITUACION_ALTA:
+            persona.fecha_baja = None
+        else:
+            persona.fecha_baja = timezone.now()
+        persona.save()
+
+    @classmethod
+    def generar_baja(cls, persona, fecha, usuario=None):
+        cls._generar_movimiento(persona, cls.SITUACION_BAJA, fecha, usuario)
+
+    @classmethod
+    def generar_alta(cls, persona, fecha, usuario=None):
+        cls._generar_movimiento(persona, cls.SITUACION_ALTA, fecha, usuario)
+
+
+def generar_alta_persona(sender, instance, created, **kwargs):
+    if created:
+        MovimientoPersona.generar_alta(persona=instance, fecha=instance.created_at)
+
+
+post_save.connect(generar_alta_persona, sender=Persona)
