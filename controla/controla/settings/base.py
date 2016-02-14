@@ -220,7 +220,7 @@ BOWER_INSTALLED_APPS = (
     'datatables.net#^1.10.10',
     'datatables.net-bs#^1.10.10',
     'bootstrap-datepicker#^1.5.1',
-    'PACE#1.0.2'
+    'pace#1.0.2'
 )
 
 ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO
