@@ -174,6 +174,7 @@ PIPELINE = {
                 'datatables.net-bs/js/dataTables.bootstrap.js',
                 'bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
                 'bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js',
+                'PACE/pace.js'
             ),
             'output_filename': 'js/plugins.js',
         },
@@ -219,7 +220,7 @@ BOWER_INSTALLED_APPS = (
     'datatables.net#^1.10.10',
     'datatables.net-bs#^1.10.10',
     'bootstrap-datepicker#^1.5.1',
-
+    'PACE#1.0.2'
 )
 
 ESTADO_DEFAULT = 6  # AUSENTE SIN AVISO
