@@ -16,7 +16,7 @@ class IndexProyect(ResponsableViewMixin, TemplateView):
     def get_context_data(self, **kwargs):
         data = super(IndexProyect, self).get_context_data(**kwargs)
         try:
-            proyectos = [x.proyecto_id for x in self.request.user.persona.get().responsable_rel.all()]
+            proyectos = [x.proyecto_id for x in self.request.user.persona.responsable_rel.all()]
             data["proyectos"] = Proyecto.con_personas.filter(id__in=proyectos)
             hoy = datetime.now()
             data["asistencia_dia"] = list(Asistencia.objects.filter(
@@ -43,7 +43,7 @@ class AltaAsistenciaView(ResponsableViewMixin, BaseAltaAsistenciaView):
 
 class DetailAsistenciaView(ResponsableViewMixin, BaseDetailAsistenciaView):
     def get_queryset(self):
-        proyectos = self.request.user.persona.get().responsable_rel.values_list("proyecto")
+        proyectos = self.request.user.persona.responsable_rel.values_list("proyecto")
         return Asistencia.objects.filter(proyecto_id__in=proyectos)
 
 
@@ -61,7 +61,7 @@ class VerAsistenciaByDate(ResponsableViewMixin, BaseVerAsistenciaByDate):
 
     def get_queryset(self):
         try:
-            return Proyecto.objects.filter(responsable_rel__persona_id=self.request.user.persona.first().pk)
+            return Proyecto.objects.filter(responsable_rel__persona_id=self.request.user.persona.pk)
         except:
             return Proyecto.objects.none()
 
