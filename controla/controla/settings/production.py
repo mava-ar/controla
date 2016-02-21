@@ -51,15 +51,6 @@ LOGGING = {
     },
 }
 
-import raven
-
-RAVEN_CONFIG = {
-    'dsn': 'http://68c6582410ac4901bf45be7324eb7c4a:fb24c680bc054ce5a8eb8af7684f11f3@sentry.apps.zille.com.ar/2',
-    # If you are using git, you can also automatically configure the
-    # release based on the git info.
-    # 'release': raven.fetch_git_sha(os.path.dirname(__file__)),
-}
-
 PIPELINE.update({'PIPELINE_ENABLED': True})
 COMPRESS_ENABLED = True
 
