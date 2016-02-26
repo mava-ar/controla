@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms.formsets import formset_factory
 from django.utils import timezone
 
@@ -67,3 +68,17 @@ class AltaPersonalForm(forms.Form):
     personas = forms.ModelMultipleChoiceField(Persona.all_persons.filter(fecha_baja__isnull=False))
     situacion = forms.ChoiceField(choices=(MovimientoPersona.TIPO_SITUACION[0], ),
                                   widget=forms.HiddenInput(), initial=MovimientoPersona.SITUACION_ALTA)
+
+
+class FusionarProyectosForm(forms.Form):
+    proyecto_destino = forms.ModelChoiceField(
+        Proyecto.objects.all(),
+        empty_label="Seleccione el proyecto destino",
+        help_text="Seleccione el proyecto que recibirá todos los datos de los proyectos abajo seleccioandos.")
+    proyectos_fusion = forms.ModelMultipleChoiceField(
+        Proyecto.all_proyects.all(), label="Seleccione todos los proyectos a fusionar",
+        help_text="Seleccione todos los proyectos que fusionará con el proyecto destino. Estos proyectos serán "
+                  "eliminados si el proceso es satisfactorio")
+    nuevo_nombre = forms.CharField(max_length=255, required=False, min_length=4,
+                                   help_text="Escriba una nuevo nombre si desea corregir el nombre del proyecto destino")
+

@@ -1,0 +1,35 @@
+@import 'mixin';
+
+select.form-control {
+  width:100%;
+}
+
+.control-label {
+  font-weight:700;
+}
+
+.form-group {
+  margin: 10px 0px;
+}
+
+.help-block {
+  padding: 7px;
+  border: 1px solid #eeeeee;
+  background-color: #DDECD1;
+  color: #333;
+  margin: 5px 0;
+  @include radius(5px);
+}
+
+.has-error {
+  padding: 7px;
+  border: 1px solid #ac2925;
+  background-color: #e4b9b9;
+  color: #fff;
+  margin: 5px 0;
+  @include radius(5px);
+}
+
+.col-50 {
+  width: 50%;
+}

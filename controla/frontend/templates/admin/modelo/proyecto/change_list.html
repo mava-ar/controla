@@ -1,0 +1,7 @@
+{% overextends "admin/change_list.html" %}
+
+{% block object-tools %}
+    {{ block.super }}
+    <a class="btn btn-info pull-right" href="{% url 'supervisor_frontend:fusionar_proyectos' %}">Fusionar proyecto</a>
+
+{% endblock %}

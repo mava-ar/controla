@@ -1,4 +1,4 @@
-{% load admin_static %}{% load suit_tags %}{% load url from suit_compat %}<!DOCTYPE html>
+{% load admin_static %}{% load suit_tags %}{% load url from suit_compat %}{% load pipeline %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,7 @@
   <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% endblock %}"/>
   <link rel="stylesheet" type="text/css" href="{% static 'suit/bootstrap/css/bootstrap.min.css' %}" media="all"/>
   <link rel="stylesheet" type="text/css" href="{% static 'suit/css/suit.css' %}" media="all">
+    {% stylesheet 'base_admin' %}
   {% block extrastyle %}{% endblock %}
   {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}"/>{% endif %}
   <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>

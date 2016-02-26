@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'compressor',
     'simple_history',
     'mailer',
+    'overextends',
 
     'dj_utils',
     'modelo',
@@ -149,6 +150,16 @@ PIPELINE = {
                 'media': 'screen,projection',
             },
         },
+        'base_admin': {
+            'source_filenames': (
+                'chosen/chosen.min.css',
+                'frontend/css/base_admin.scss',
+            ),
+            'output_filename': 'css/base_admin.css',
+            'extra_context': {
+                'media': 'screen,projection',
+            }
+        }
         # 'plugins': {
             # 'source_filenames': (
                 # 'datatables/media/css/jquery.dataTables.css',

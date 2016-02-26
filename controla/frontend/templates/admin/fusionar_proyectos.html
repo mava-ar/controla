@@ -1,0 +1,40 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n static bootstrap3 %}
+{% block title %}Fusión de proyectos{{ block.super }}{% endblock %}
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+      <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        <span class="divider">&raquo;</span></li>
+      <li>
+        <a href="{% url 'admin:modelo_proyecto_changelist' %}">
+            Proyectos</a>
+        <span class="divider">&raquo;</span></li>
+      <li class="active">Fusionar proyectos</li>
+    </ul>
+{% endblock %}
+{% block content %}
+<h2>Fusionar proyectos</h2>
+    <div class="content-main col-50">
+        <form method="post" action="." role="form" novalidate>
+            {% csrf_token %}
+
+            {% bootstrap_form form %}
+            <input type="submit" value="Fusionar" class="btn btn-high btn-info" />
+        </form>
+        </div>
+{% endblock %}
+
+{% block extrajs %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'chosen/chosen.jquery.min.js' %}"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $("#id_proyecto_destino, #id_proyectos_fusion").attr('data-placeholder', 'Busque proyectos por su nombre');
+            $("#id_proyecto_destino, #id_proyectos_fusion").chosen({
+                'search_contains':true,
+                'no_results_text': "No se encontraron coicidencias!",
+            });
+        });
+    </script>
+{% endblock %}

@@ -16,3 +16,4 @@ django-mailer==1.1.0
 reportlab
 celery==3.1.20
 redis==2.10.5
+django-overextends

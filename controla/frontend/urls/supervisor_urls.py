@@ -19,4 +19,6 @@ urlpatterns = [
     url(r'^notificaciones$', views.update_notification, name="update_notification"),
     url(r'^ver_asistencia$', views.ver_asistencia_fecha, name="ver_asistencia_fecha"),
     url(r'^ver_asistencia_ajax/$', views.ver_asistencia_ajax, name="ver_asistencia_ajax"),
+    url(r'^fusionar_proyectos/$', views.fusionar_proyectos, name="fusionar_proyectos"),
+
 ]

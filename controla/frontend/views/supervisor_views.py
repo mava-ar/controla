@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
 
 from django.contrib import messages
-from django.http import HttpResponse
-from django.views.generic import TemplateView
+from django.db import IntegrityError
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import TemplateView, FormView
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.transaction import atomic
 
-from modelo.models import Responsable, Asistencia, Proyecto
+from modelo.models import Responsable, Asistencia, Proyecto, Persona, RegistroAsistencia
 from frontend.views.mixins import SupervisorViewMixin
+from frontend.forms import FusionarProyectosForm
 from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView,
                                  BaseAltaAsistenciaView, BaseNotificacionesView, BaseVerAsistenciaAjaxView,
                                  BaseVerAsistenciaByDate, BaseBajaPersonalView)
@@ -159,6 +162,44 @@ class VerAsistenciaAjaxView(SupervisorViewMixin, BaseVerAsistenciaAjaxView):
     pass
 
 
+class FusionarProyectosView(SupervisorViewMixin, FormView):
+    template_name = 'admin/fusionar_proyectos.html'
+    form_class = FusionarProyectosForm
+    success_url = 'supervisor_frontend:fusionar_proyectos'
+
+    def form_valid(self, form):
+        p_destino = form.cleaned_data["proyecto_destino"]
+        try:
+            for p_fusion in form.cleaned_data["proyectos_fusion"]:
+                if p_fusion == p_destino:
+                    continue
+                # mover personas
+                Persona.objects.filter(proyecto=p_fusion).update(proyecto=p_destino)
+                # mover asistencia
+                try:
+                    Asistencia.objects.filter(proyecto=p_fusion).update(proyecto=p_destino)
+                except IntegrityError:
+                    for asist in Asistencia.objects.filter(proyecto=p_fusion):
+                        nueva, _ = Asistencia.objects.get_or_create(fecha=asist.fecha, proyecto=p_destino)
+                        RegistroAsistencia.objects.filter(asistencia=asist).update(asistencia=nueva)
+                    Asistencia.objects.filter(proyecto=p_fusion).delete()
+                # Eliminar responsable
+                Responsable.objects.filter(proyecto=p_fusion).delete()
+                # Eliminar proyecto
+                p_fusion.delete()
+                messages.add_message(self.request, messages.SUCCESS,
+                                     "Proyecto {} fusionado con {}.".format(p_fusion, p_destino))
+            if 'nuevo_nombre' in form.cleaned_data and len(form.cleaned_data["nuevo_nombre"]) > 4:
+                p_destino.nombre = form.cleaned_data["nuevo_nombre"]
+                p_destino.save()
+                messages.add_message(self.request, messages.SUCCESS,
+                                     "Nuevo nombre del proyecto: {} .".format(p_destino.nombre))
+
+        except Exception as e:
+            return super(FusionarProyectosView, self).form_invalid(form)
+        return HttpResponseRedirect(reverse(self.get_success_url()))
+
+
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 baja_personal = BajaPersonalView.as_view()
@@ -174,4 +215,4 @@ export_asistencia_pdf = Export2PDFView.as_view()
 update_notification = NotificacionesView.as_view()
 ver_asistencia_fecha = VerAsistenciaByDate.as_view()
 ver_asistencia_ajax = VerAsistenciaAjaxView.as_view()
-
+fusionar_proyectos = FusionarProyectosView.as_view()
