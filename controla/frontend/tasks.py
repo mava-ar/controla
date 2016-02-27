@@ -21,7 +21,7 @@ def email_tasks():
 
 
 # alerta de asistencia faltante.
-@periodic_task(run_every=(crontab(minute='30', hour='16')), name="send_email_alert", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='00', hour='11')), name="send_email_alert", ignore_result=True)
 def send_email_alert():
     hoy = timezone.now()
     # para cada responsables
@@ -43,7 +43,7 @@ def send_email_alert():
 
 
 # envío resumen de alta de asistencias
-@periodic_task(run_every=(crontab(minute='30', hour='18')), name="send_email_all_asistencia", ignore_result=True)
+@periodic_task(run_every=(crontab(minute='30', hour='14')), name="send_email_all_asistencia", ignore_result=True)
 def send_email_all_asistencia():
     hoy = timezone.now()
     # para cada responsables
