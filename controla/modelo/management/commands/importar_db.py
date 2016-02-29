@@ -34,7 +34,10 @@ class Command(BaseCommand):
                     self.fecha = None
                     continue
                 self.fecha = timezone.make_aware(self.fecha)
-                pers_filt = Persona.all_persons.filter(legajo=row[0])
+                if not row[0].strip() == '':
+                    pers_filt = Persona.all_persons.filter(legajo=row[0])
+                else:
+                    pers_filt = Persona.all_persons.filter(cuil=row[3])
                 proyecto = None
                 if pers_filt:
                     persona = pers_filt[0]
@@ -44,9 +47,13 @@ class Command(BaseCommand):
                     try:
                         cct = CCT.objects.get(nombre=row[4])
                     except CCT.DoesNotExist:
-                        cct = CCT(nombre=row[4])
-                        cct._history_date = self.fecha
-                        cct.save()
+                        if row[4].strip() == '':
+                            cct = CCT.objects.get(nombre__icontains="Fuera de convenio")
+                        else:
+                            cct = CCT(nombre=row[4])
+                            cct._history_date = self.fecha
+                            cct.save()
+                            self.stdout.write("Se creó nuevo CCT {}.".format(cct.nombre))
                     proyecto = self.get_proyecto_or_default(row[5], row)
                     persona = self.guardar_persona(row, cct, proyecto)
                 # teniendo las entidades ya creadas, realizamos el
@@ -71,7 +78,7 @@ class Command(BaseCommand):
                     registro._history_date = self.fecha
                     registro.save()
                     self.r_new += 1
-                    self.stdout.write("Registro creado -> {}".format(registro))
+                    # self.stdout.write("Registro creado -> {}".format(registro))
 
         self.stdout.write("Se han creado o actualizado {} persona, {} "
                           "asistencias con un total de {} registros.".format(
@@ -79,7 +86,7 @@ class Command(BaseCommand):
 
     def guardar_persona(self, row, cct, proyecto):
         persona = Persona()
-        persona.legajo = row[0]
+        persona.legajo = row[0] if row[0] else row[3].replace('-','')
         persona.apellido = row[1]
         persona.nombre = row[2]
         persona.cuil = row[3]
@@ -88,6 +95,7 @@ class Command(BaseCommand):
         persona._history_date = self.fecha
         persona.save()
         self.p_new += 1
+        self.stdout.write("Se creó nuevo persona {}.".format(str(persona)))
         return persona
 
     def buscar_responsable(self, proyecto, row):
@@ -107,6 +115,7 @@ class Command(BaseCommand):
                 responsable = Responsable(persona=persona[0], proyecto=proyecto)
                 responsable._history_date = self.fecha
                 responsable.save()
+                self.stdout.write("Se asignó responsable -> {}.".format(str(responsable)))
 
     def get_proyecto_or_default(self, nombre, row):
         if nombre.strip() == '':
@@ -119,6 +128,7 @@ class Command(BaseCommand):
                 p = Proyecto(nombre=nombre.strip())
                 p._history_date = self.fecha
                 p.save()
+                self.stdout.write("Se creó nuevo proyecto {}.".format(p.nombre))
             self.buscar_responsable(p, row)
             return p
 
