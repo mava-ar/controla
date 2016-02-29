@@ -82,7 +82,8 @@ def evolucion_registros_asistencia(start_date, ends_date):
                 val = processed.get(day, {}).get(True, 0)
             else:
                 val = processed.get(day, {}).get(False, 0)
-            series["values"].append({'x': day.isoformat(), 'y': val})
+            # desconozco porque debe sumar un día para que sea correcto el gráfico
+            series["values"].append({'x': (day+ timedelta(days=1)).isoformat(), 'y': val})
 
         report.append(series)
 
