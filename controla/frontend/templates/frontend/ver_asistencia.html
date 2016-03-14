@@ -7,4 +7,11 @@
 {% block content %}
     {% include 'frontend/includes/_table_asistencia.html' %}
     {% include 'frontend/includes/_personas_ya_registradas.html' %}
+    {% if request.user.is_supervisor %}
+        <a class="btn btn-default" href="{% url 'supervisor_frontend:index_responsable' %}">Volver</a>
+
+    {% else %}
+        <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
+    {% endif %}
+
 {% endblock %}

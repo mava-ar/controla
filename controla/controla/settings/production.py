@@ -13,26 +13,28 @@ ADMINS = [
     ('Matias Varela', 'matias.varela@info-ingenieria.com.ar'),
 ]
 
+SENTRY_AUTO_LOG_STACKS = True
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
-        'level': 'WARNING',
+        'level': 'DEBUG',
         'handlers': ['sentry'],
     },
     'handlers': {
         'file': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': normpath(join(SITE_ROOT, '../../logs/django-debug.log')),
         },
         'mail_admins': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
         'sentry': {
-            'level': 'ERROR',
+            'level': 'DEBUG',
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
             'tags': {'custom-tag': 'x'},
         },
@@ -46,7 +48,17 @@ LOGGING = {
         'django_mail': {
             'handlers': ['mail_admins'],
             'propagate': True,
-            'level': 'ERROR',
+            'level': 'DEBUG',
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
         },
     },
 }

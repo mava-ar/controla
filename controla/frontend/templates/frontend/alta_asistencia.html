@@ -62,8 +62,12 @@
     </table>
 
     {% include 'frontend/includes/_personas_ya_registradas.html' %}
+        {% if request.user.is_supervisor %}
+        <a class="btn btn-default" href="{% url 'supervisor_frontend:index_responsable' %}">Volver</a>
 
-        <a class="btn btn-default" href="{% url 'index' %}">Volver</a> |
+    {% else %}
+        <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
+    {% endif %} |
         <input type="submit" value="Guardar" class="submit btn btn-primary" id="btn-submit"/>
     </form>
 

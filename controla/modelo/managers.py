@@ -1,4 +1,5 @@
 from django.db import models
+from django.apps import apps
 
 
 class ProyectoManager(models.Manager):
@@ -12,8 +13,11 @@ class ProyectoManager(models.Manager):
 
 class ProyectoConPersonasManager(ProyectoManager):
     def get_queryset(self):
-        return super(ProyectoConPersonasManager, self).get_queryset().annotate(
-            pers=models.Count('personas_involucradas__pk')).filter(pers__gt=0)
+        Persona = apps.get_model("modelo", "Persona")
+        # Desde personas, selecciono los ids de proyectos con personas
+        con_personas = set(Persona.objects.values_list('proyecto_id', flat=True))
+        return super(ProyectoConPersonasManager, self).get_queryset().filter(pk__in=con_personas)
+
 
 class PersonaManager(models.Manager):
 

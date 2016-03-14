@@ -97,9 +97,9 @@ class IndexResponsable(SupervisorViewMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         data = super(IndexResponsable, self).get_context_data(**kwargs)
-        data["responsables"] = dict([(x[0], "{} {}".format(x[1], x[2])) for x in
+        data["responsables"] = [(x[0], "{} {}".format(x[1], x[2])) for x in
                                      Responsable.objects.values_list(
-                                             'persona__pk', 'persona__apellido', 'persona__nombre').distinct()])
+                                             'persona__pk', 'persona__apellido', 'persona__nombre').order_by('persona').distinct()]
         return data
 
 

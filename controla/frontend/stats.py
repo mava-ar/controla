@@ -1,4 +1,4 @@
-import calendar
+import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -6,12 +6,14 @@ from django.db.models import Count, Case, When
 
 from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado
 
+logger = logging.getLogger(__name__)
+
 
 def get_proyectos_estados(hoy=datetime.now()):
-    data = list(Proyecto.con_personas.annotate(
-        ok=Count(Case(When(asistencias__fecha=hoy, then=1)))).values_list(
-        'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
-    return data
+     data = list(Proyecto.con_personas.annotate(
+         ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk')))).values_list(
+         'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
+     return data
 
 
 def porcentaje_asistencia_proyecto(hoy=datetime.now()):
@@ -20,7 +22,9 @@ def porcentaje_asistencia_proyecto(hoy=datetime.now()):
         return 0
 
     perc = Proyecto.con_personas.filter(asistencias__fecha=hoy).count()
-    return "{}".format(int(perc * 100 / total))
+    val = int(perc * 100 / total)
+    logger.debug("Total proyectos: {} | Proyecto con asistencias: {} | %: {}".format(total, perc, val))
+    return "{}".format(val)
 
 
 def porcentaje_actividad(hoy=datetime.now()):
@@ -29,7 +33,9 @@ def porcentaje_actividad(hoy=datetime.now()):
         return 0
 
     noociosos = RegistroAsistencia.objects.filter(asistencia__fecha=hoy, estado__no_ocioso=True).count()
-    return "{}".format(int(noociosos * 100 / total))
+    val = int(noociosos * 100 / total)
+    logger.debug("Total asistencias: {} | Total no aciosos: {} | %: {}".format(total, noociosos, val))
+    return "{}".format(val)
 
 
 def porcentaje_asistencia_persona(hoy=datetime.now()):
@@ -38,7 +44,9 @@ def porcentaje_asistencia_persona(hoy=datetime.now()):
         return 0
 
     registros = Persona.objects.filter(registro_asistencia__asistencia__fecha=hoy, proyecto__isnull=False).count()
-    return "{}".format(int(registros * 100 / total))
+    val = int(registros * 100 / total)
+    logger.debug("Total personas: {} | Total registros hoy: {} | %: {}".format(total, registros, val))
+    return "{}".format(val)
 
 
 def daterange(start_date, end_date):
@@ -54,7 +62,7 @@ def sort_dict(adict, reverse=False):
 
 def evolucion_registros_asistencia(start_date, ends_date):
 
-    qs = RegistroAsistencia.objects.filter(
+    qs = RegistroAsistencia.objects.select_related('estado', 'persona').filter(
             asistencia__fecha__gte=start_date,
             asistencia__fecha__lte=ends_date).values_list(
             'asistencia__fecha', 'estado__no_ocioso').annotate(cant=Count('estado_id'))
@@ -178,7 +186,7 @@ def get_asistencia_persona(start, end):
     qs = RegistroAsistencia.objects.filter(
             asistencia__fecha__gte=start,
             asistencia__fecha__lte=end).values(
-            'persona__apellido', 'persona__nombre', 'estado__codigo').annotate(cant=Count('pk'))
+            'persona__apellido', 'persona__nombre', 'estado__codigo').annotate(cant=Count('pk')).order_by('persona')
 
     processed = defaultdict(dict)
     for it in qs:
@@ -189,7 +197,7 @@ def get_asistencia_persona(start, end):
     header.extend(estados)
     report.append(header)
 
-    for nombre, data in processed.items():
+    for nombre, data in sort_dict(processed):
         aux = list()
         aux.append(nombre)
         for est in estados:

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
@@ -51,6 +52,12 @@ class Proyecto(BaseModelWithHistory):
     class Meta:
         verbose_name = "proyecto"
         verbose_name_plural = "proyectos"
+        ordering = ['nombre', ]
+
+    def clean(self):
+        super(Proyecto, self).clean()
+        if not self.pk and Proyecto.all_proyects.filter(nombre=self.nombre).exists():
+            raise ValidationError({'nombre': ["Nombre de proyecto existente. Por favor, elija otro!",]})
 
     def __str__(self):
         return self.nombre if self.nombre else "Sin nombre"
@@ -133,6 +140,11 @@ class Persona(BaseModelWithHistory):
     def __str__(self):
         return "{} {}".format(self.apellido, self.nombre)
 
+    def clean(self):
+        super(Persona, self).clean()
+        if not self.pk and Persona.all_persons.filter(legajo=self.legajo).exists():
+            raise ValidationError({'legajo': ["Número de legajo ocupado.!",]})
+
     @property
     def activo(self):
         return self.fecha_baja is None
@@ -199,6 +211,7 @@ class RegistroAsistencia(BaseModelWithHistory):
         verbose_name = "registro de asistencia"
         verbose_name_plural = "registros de asistencia"
         unique_together = ('asistencia', 'persona', )
+
 
     def __str__(self):
         return "{} - {}".format(self.persona, self.asistencia)

@@ -11,8 +11,8 @@
                 <label class="sr-only" for="responsables" class="control-label">Responsable: </label>
                 <select name="responsables" id="responsables"  class="form-control">
                     <option value="">Seleccione un responsable</option>
-                    {% for k, v in responsables.items %}
-                        <option value="{{ k }}">{{ v }}</option>
+                    {% for k in responsables %}
+                        <option value="{{ k.0 }}">{{ k.1 }}</option>
                     {% endfor %}
                     </select>
             </div>

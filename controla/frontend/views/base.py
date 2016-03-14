@@ -183,24 +183,24 @@ class BaseAltaAsistenciaView(CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(BaseAltaAsistenciaView, self).get_context_data(**kwargs)
-        personas = dict(
-                [ (x["pk"], "{} {}".format(x["nombre"], x["apellido"]) ) for x in Persona.objects.filter(
-                        proyecto=self.proyecto).values('pk','nombre', 'apellido') ]
-        )
+        personas = [ (x["pk"], "{} {}".format(x["apellido"], x["nombre"]) ) for x in Persona.objects.filter(
+                        proyecto=self.proyecto).values('pk', 'apellido','nombre').order_by('apellido', 'nombre')]
         registros_existente = RegistroAsistencia.objects.filter(
-                persona_id__in=personas.keys(), asistencia__fecha=datetime.now()).select_related(
+                persona_id__in=personas, asistencia__fecha=datetime.now()).select_related(
                 "asistencia__proyecto, persona").values(
-                'persona__nombre', 'persona__apellido', 'estado__codigo', 'estado__situacion',
+                'persona_id', 'persona__nombre', 'persona__apellido', 'estado__codigo', 'estado__situacion',
                 'asistencia__proyecto__nombre')
         if registros_existente:
+            aux = list()
             data["ya_registradas"] = registros_existente
-            for x in data["ya_registradas"]:
-                personas.pop(x.persona_id, 0)
+            for reg in data["ya_registradas"]:
+                aux.append((reg["persona_id"], "{} {}".format(reg["persona__apellido"], reg["persona__nombre"])))
+            personas = [y for y in personas if y not in aux]
         data["proyecto"] = self.proyecto
-        data["personas"] = personas
+        data["personas"] = dict(personas)
         if "formsets" not in kwargs:
             estado = settings.ESTADO_DEFAULT
-            initial = [{ 'persona': k, 'estado': estado} for k,v in personas.items()]
+            initial = [{ 'persona': k, 'estado': estado} for k,v in personas]
             data['formsets'] = RegistroAsistenciaFormSet(initial=initial)
         return data
 
@@ -254,6 +254,7 @@ class BaseDetailAsistenciaView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(BaseDetailAsistenciaView, self).get_context_data()
+        context["registros"] = self.object.items.all().order_by('persona')
         context["ya_registradas"] = RegistroAsistencia.objects.filter(
                 persona__in=context["asistencia"].proyecto.personas_involucradas.all(),
                 asistencia__fecha=datetime.now()).exclude(
@@ -304,11 +305,12 @@ class BaseVerAsistenciaAjaxView(TemplateView):
         form = VerAsistenciaForm(self.request.GET)
         data = self.get_context_data()
         try:
-            form.is_valid()
-            proy = form.cleaned_data["proyecto"]
-            fecha = form.cleaned_data["fecha"]
-            data["object"] = Asistencia.objects.get(
-                proyecto=proy, fecha=fecha)
+            if form.is_valid():
+                proy = form.cleaned_data["proyecto"]
+                fecha = form.cleaned_data["fecha"]
+                data["object"] = Asistencia.objects.get(
+                    proyecto=proy, fecha=fecha)
+                data["registros"] = data["object"].items.all().order_by('persona')
         except Asistencia.DoesNotExist:
             data["object"] = None
         return self.render_to_response(data)

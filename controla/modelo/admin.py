@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -109,7 +110,16 @@ class AsistenciaAdmin(SimpleHistoryAdmin):
     # def has_delete_permission(self, request, obj=None):
     #     return False
 
+    def has_add_permission(self, request):
+        return False
+
 @admin.register(Responsable)
 class ResponsableAdmin(SimpleHistoryAdmin):
-    list_display = ("proyecto", "persona", )
+    list_display = ("persona", "proyecto", )
+    list_display_links = ('persona', 'proyecto', )
     list_filter = ("proyecto", 'persona', )
+    ordering = ('persona', 'proyecto', )
+
+    def get_queryset(self, request):
+        # no muestro responsable con personas o proyectos dados de baja
+        return Responsable.objects.exclude(Q(persona__fecha_baja__isnull=False) | Q(proyecto__fecha_baja__isnull=False))

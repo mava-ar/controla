@@ -1,0 +1,8 @@
+{% overextends "admin/change_list.html" %}
+
+{% block content %}
+    <p class="alert alert-info">
+    No se muestran relaciones de "responsables" con personas o proyectos que están dados de baja.
+    </p>
+    {{ block.super }}
+{% endblock %}

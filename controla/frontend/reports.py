@@ -47,7 +47,7 @@ class PdfPrintAltaAsistencia(PdfPrint):
         table_data.append([
             Paragraph('Nombre', styles['TableHeader']),
             Paragraph('Estado de asistencia', styles['TableHeader']),])
-        for item in asistencia.items.all():
+        for item in asistencia.items.all().order_by('persona'):
             table_data.append([
                 item.persona,
                 item.estado])

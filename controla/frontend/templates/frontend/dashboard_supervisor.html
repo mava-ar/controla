@@ -124,6 +124,7 @@
                     {% for dat in graf_evolucion %}
                         {
                             key: "{{ dat.key }}",
+                            color: {% if forloop.first %}"#325D88"{% else %}"#D9534F"{% endif %},
                             values: [
                                 {% for val in dat.values %}
                                     {x: new Date("{{ val.x }}"), y: {{ val.y }}}
@@ -136,8 +137,8 @@
                 ];
 
                 nv.addGraph(function() {
-                    var chart = nv.models.lineChart()
-                            .useInteractiveGuideline(true)
+                    var chart = nv.models.multiBarChart()
+                            //.useInteractiveGuideline(true)
                             .options({
                                 margin: {left: 50, bottom: 100},
                                 showXAxis: true,
