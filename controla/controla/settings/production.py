@@ -19,7 +19,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
-        'level': 'DEBUG',
+        'level': 'WARNING',
         'handlers': ['sentry'],
     },
     'handlers': {
@@ -34,7 +34,7 @@ LOGGING = {
             'include_html': True,
         },
         'sentry': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
             'tags': {'custom-tag': 'x'},
         },
@@ -48,15 +48,15 @@ LOGGING = {
         'django_mail': {
             'handlers': ['mail_admins'],
             'propagate': True,
-            'level': 'DEBUG',
+            'level': 'WRANING',
         },
         'raven': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': ['file'],
             'propagate': False,
         },
         'sentry.errors': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'handlers': ['file'],
             'propagate': False,
         },
