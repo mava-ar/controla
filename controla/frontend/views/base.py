@@ -1,4 +1,5 @@
 from datetime import datetime
+from raven.contrib.django.raven_compat.models import client
 
 from django.conf import settings
 from django.contrib import messages
@@ -241,10 +242,11 @@ class BaseAltaAsistenciaView(CreateView):
                     if f.cleaned_data["estado"]:
                         reg.estado = f.cleaned_data["estado"]
                     reg.save()
-            send_notification(self.object)
         except IntegrityError:
-            self.form_invalid(form, formsets)
+            client.captureException()
+            return self.form_invalid(form, formsets)
 
+        send_notification(self.object, request=self.request)
         return HttpResponseRedirect(self.get_success_url())
 
 
