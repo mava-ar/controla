@@ -48,7 +48,7 @@ LOGGING = {
         'django_mail': {
             'handlers': ['mail_admins'],
             'propagate': True,
-            'level': 'WRANING',
+            'level': 'WARNING',
         },
         'raven': {
             'level': 'ERROR',
