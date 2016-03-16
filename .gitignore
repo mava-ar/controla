@@ -157,4 +157,5 @@ celerybeat.pid
 celerybeat-schedule
 
 fabfile.py
-bkp-dbs/*
+bkp-dbs/
+

@@ -24,13 +24,14 @@ class DashboardView(SupervisorViewMixin, TemplateView):
     template_name = "frontend/dashboard_supervisor.html"
 
     def get_context_data(self, **kwargs):
-        data = super(DashboardView, self).get_context_data(**kwargs)
-        data["perc_asis_proyecto"] = porcentaje_asistencia_proyecto()
-        data["perc_no_ocioso"] = porcentaje_actividad()
-        data["perc_asis_persona"] = porcentaje_asistencia_persona()
         hoy = datetime.now()
+        data = super(DashboardView, self).get_context_data(**kwargs)
+        data["perc_asis_proyecto"] = porcentaje_asistencia_proyecto(hoy)
+        data["perc_no_ocioso"] = porcentaje_actividad(hoy)
+        data["perc_asis_persona"] = porcentaje_asistencia_persona(hoy)
+
         data["graf_evolucion"], data["table_evolucion"] = evolucion_registros_asistencia(hoy + timedelta(-7), hoy)
-        data["proyectos_estados"] = get_proyectos_estados()
+        data["proyectos_estados"] = get_proyectos_estados(hoy)
         return data
 
 

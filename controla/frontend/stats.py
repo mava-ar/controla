@@ -9,14 +9,18 @@ from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado
 logger = logging.getLogger(__name__)
 
 
-def get_proyectos_estados(hoy=datetime.now()):
-     data = list(Proyecto.con_personas.annotate(
-         ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk')))).values_list(
-         'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
-     return data
+def get_proyectos_estados(hoy=None):
+    if hoy is None:
+        hoy = datetime.now()
+    data = list(Proyecto.con_personas.annotate(
+        ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk')))).values_list(
+        'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
+    return data
 
 
-def porcentaje_asistencia_proyecto(hoy=datetime.now()):
+def porcentaje_asistencia_proyecto(hoy=None):
+    if hoy is None:
+        hoy = datetime.now()
     total = Proyecto.con_personas.count()
     if total == 0:
         return 0
@@ -27,7 +31,9 @@ def porcentaje_asistencia_proyecto(hoy=datetime.now()):
     return "{}".format(val)
 
 
-def porcentaje_actividad(hoy=datetime.now()):
+def porcentaje_actividad(hoy=None):
+    if hoy is None:
+        hoy = datetime.now()
     total = RegistroAsistencia.objects.filter(asistencia__fecha=hoy).count()
     if total == 0:
         return 0
@@ -38,7 +44,9 @@ def porcentaje_actividad(hoy=datetime.now()):
     return "{}".format(val)
 
 
-def porcentaje_asistencia_persona(hoy=datetime.now()):
+def porcentaje_asistencia_persona(hoy=None):
+    if hoy is None:
+        hoy = datetime.now()
     total = Persona.objects.filter(proyecto__isnull=False).count()
     if total == 0:
         return 0
