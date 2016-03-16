@@ -1,7 +1,7 @@
 {% extends "frontend/layout_base.html" %}
 {% load bootstrap3 compress frontend_tags %}
 {% block title %}
-    <h2 class="main-title">Alta de asistencia diaria</h2>
+    <h3 class="main-title">Alta de asistencia diaria</h3>
 {% endblock %}
 {% block wide_class %}container{% endblock %}
 {% block content %}
@@ -12,26 +12,39 @@
         {% if request.user.is_supervisor %}
             <div class="col-sm-6">
                 {% bootstrap_field form.proyecto %}
-                <h3>Proyecto: <strong>{{ proyecto }}</strong></h3>
-                <h3>Reponsable: <strong>{{ proyecto.responsable_rel.persona }}</strong></h3>
+                <h4>Proyecto: <strong>{{ proyecto }}</strong></h4>
+                <h4>Reponsable: <strong>{{ proyecto.responsable_rel.persona }}</strong></h4>
             </div>
             <div class="col-sm-6">
-                <h3>
+                <h4>
                 {% bootstrap_field form.fecha layout='horizontal' horizontal_label_class='col-sm-2' size='small' %}
-                </h3>
+                </h4>
             </div>
         {% else %}
             <div class="col-sm-6">
                 {% bootstrap_field form.proyecto %}
-                <h3>Proyecto: <strong>{{ proyecto }}</strong></h3>
+                <h4>Proyecto: <strong>{{ proyecto }}</strong></h4>
             </div>
-            <div class="col-sm-6"><h3>
+            <div class="col-sm-6"><h4>
                 Fecha: <strong>{% now "d/m/Y" %}</strong>
-            </h3></div>
+            </h4></div>
                 <div style="display: none;">
                     {% bootstrap_field form.fecha %}
                 </div>
         {% endif %}
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-info">
+                <div class="panel-body cambiar-estados">
+                    Cambiar todos los estados:
+                    {{ formsets.0.estado }}
+                    <a class="btn btn-info" id="btn-all-estado">Aplicar</a>
+                    <input type="submit" value="Guardar" class="submit btn btn-primary pull-right btn-submit"/>
+                </div>
+            </div>
+        </div>
 
     </div>
     {% bootstrap_form_errors form type='non_fields' layout='inline' %}
@@ -39,7 +52,7 @@
         {{ formsets.management_form }}
         {{ formsets.non_form_errors }}
 
-        <table class="table table-striped">
+        <table class="table table-striped alta-asistencia">
         <thead>
         <tr>
             <th>Nombre</th>
@@ -68,7 +81,7 @@
     {% else %}
         <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
     {% endif %} |
-        <input type="submit" value="Guardar" class="submit btn btn-primary" id="btn-submit"/>
+        <input type="submit" value="Guardar" class="submit btn btn-primary btn-submit"/>
     </form>
 
 
@@ -79,12 +92,17 @@
     <script type="text/javascript">
         (function($) {
             $(document).ready(function(){
-                $("#id_fecha").datepicker({
-                    format: 'dd/mm/yyyy',
-                    language: 'es'
+
+                $("#btn-all-estado").click(function(e){
+                    e.preventDefault();
+                    new_elem = $(".cambiar-estados select").val();
+                    $("table.alta-asistencia select").each(function(i,elem){
+                        $(elem).val(new_elem);
+                    });
+{#                    alta-asistencia#}
                 });
 
-                $("#btn-submit").click(function(e){
+                $(".btn-submit").click(function(e){
                     e.preventDefault();
                     showConfirm('Presentación de asistencia',
                                 'Está a punto de enviar la planilla de asistencia. Una vez enviada no se puede modificar.\n¿Desea continuar?',

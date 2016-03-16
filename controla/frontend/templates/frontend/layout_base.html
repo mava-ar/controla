@@ -21,16 +21,29 @@
                         <li class="{% block ver_asistencia_act %}{% endblock %}">
                             <a href="{% url url1 %}">Asistencias</a></li>
                     {% endwith %}
-                    {% if request.user.cambia_personal %}
-                        {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
-                            <li class="{% block reasignar_act %}{% endblock %}"><a href="{% url url1 %}">Reasignar personal</a></li>
-                        {% endwith %}
-                    {% endif %}
-                    {% if request.user.is_supervisor %}
-                        <li class="{% block baja_persona_act %}{% endblock %}">
-                            <a href="{% url 'supervisor_frontend:baja_personal' %}">Movimiento de personal</a>
+
+                    {% if request.user.cambia_personal or request.user.is_supervisor %}
+                        <li class="item-menu dropdown {% block personal %}{% endblock %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Personal <span><b class="caret"></b></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                            {% if request.user.cambia_personal %}
+                                {% with ""|add:request.current_app|add:":reasignar_personal" as url1 %}
+                                    <li><a href="{% url url1 %}">Reasignar personal</a></li>
+                                {% endwith %}
+                            {% endif %}
+
+                            {% if request.user.is_supervisor %}
+                                <li>
+                                    <a href="{% url 'supervisor_frontend:baja_personal' %}">Movimiento de personal</a>
+                                </li>
+                            {%  endif %}
+                            </ul>
                         </li>
-                    {%  endif %}
+                    {% endif %}
+
+
                     {% if request.user.is_superuser or request.user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">Administración</a></li>
                     {% endif %}
@@ -83,12 +96,19 @@
     <script type="text/javascript">
         (function($){
             $(document).ready(function(){
+                $(".datepicker").datepicker({
+                    format: 'dd/mm/yyyy',
+                    language: 'es',
+                    orientation: 'bottom'
+                });
                 $("#id_Signout").click(function(e){
                     e.preventDefault();
                     showConfirm('Cerrar sesión', 'Va a cerrar la sesión. ¿Continuar?', function(){
                         window.location = '{% url 'logout' %}';
                     });
                 });
+                $(".sticky-table-headers").stickyTableHeaders({fixedOffset: $('nav.navbar')});
+
             });
         })(jQuery);
     </script>

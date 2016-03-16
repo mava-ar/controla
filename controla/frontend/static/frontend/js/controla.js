@@ -33,3 +33,9 @@ showConfirm = function(title, message, callback_yes, callback_no) {
     });
 };
 
+
+function get_today() {
+  function pad(s) { return (s < 10) ? '0' + s : s; }
+  var d = new Date();
+  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+}

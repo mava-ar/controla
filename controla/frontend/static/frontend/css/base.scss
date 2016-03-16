@@ -36,7 +36,7 @@ form {
 }
 
 .main-title {
-  font-size: 3em;
+  font-size: 3rem;
   border-bottom: 1px solid #DDD;
   margin-bottom: 20px;
 }
@@ -170,4 +170,11 @@ form {
 @keyframes pace-spinner {
   0% { transform: rotate(0deg); transform: rotate(0deg); }
   100% { transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+
+.sticky-table-headers thead {
+    border-top: none;
+    border-bottom: none;
+    background-color: #FFF;
 }

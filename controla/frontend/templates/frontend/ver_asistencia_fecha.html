@@ -21,7 +21,7 @@
 
             <div class="col-sm-5">
                 <label for="id_fecha" class="control-label">Fecha: </label>
-                <input type="input" name="fecha" id="id_fecha" value="{{ fecha }}" class="block input-small"/>
+                <input type="input" name="fecha" id="id_fecha" value="{{ fecha }}" class="block input-small datepicker"/>
             </div>
             <div class="col-sm-2">
                 <a class="submit btn btn-primary" id="btn-submit">Visualizar</a>
@@ -40,10 +40,7 @@
     <script type="text/javascript">
         (function($){
             $(document).ready(function(){
-                $("#id_fecha").datepicker({
-                    format: 'dd/mm/yyyy',
-                    language: 'es'
-                });
+
                 $("#id_proyecto").chosen({'search_contains':true});
                 $("#btn-submit").click(function(e){
                     e.preventDefault();

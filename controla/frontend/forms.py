@@ -11,11 +11,12 @@ from users.models import User
 
 class AltaAsistenciaForm(forms.ModelForm):
     proyecto = forms.ModelChoiceField(Proyecto.objects.all(), widget=forms.HiddenInput())
-    fecha = forms.DateField()
+    fecha = forms.DateField(widget=forms.DateInput(attrs={'class':'datepicker'}))
 
     class Meta:
         model = Asistencia
         fields = ('proyecto', 'fecha', )
+
 
 
 class RegistroAsistenciaForm(forms.Form):

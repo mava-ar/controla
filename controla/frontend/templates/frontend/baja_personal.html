@@ -1,7 +1,7 @@
 {% extends "frontend/layout_base.html" %}
 {% load bootstrap3 frontend_tags compress %}
 {% block index_act %}{% endblock %}
-{% block baja_persona_act %}active{% endblock %}
+{% block personal %}active{% endblock %}
 {%  block title %}
     <h2 class="main-title">Alta y baja de personal
         <a class="pull-right btn btn-success" href="{% url 'admin:modelo_persona_add' %}">Alta de persona</a>

@@ -1,7 +1,7 @@
 {% extends "frontend/base_data_report.html" %}
 {% load compress frontend_tags%}
 {% block active_percentual %}active{% endblock %}
-{% block total_report %}<span class="panel text-primary">Mostrando registros de {{ table|length|add:"-1" }} días.</span>{% endblock %}
+{% block total_report %}<span class="panel text-primary">Mostrando registros de {{ table|length|add:"-2" }} días.</span>{% endblock %}
 {% block btn_export %}
     <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_porcentual' %}">Exportar</a>
 {%  endblock %}
@@ -18,13 +18,13 @@
             {% endfor %}
         </div>
     </div>
-    <table class="table table-bordered table-striped table-hover" id="datatables">
+    <table class="table table-bordered table-striped table-hover sticky-table-headers">
         {% for x in table %}
             {% if forloop.first %}
                 <thead>
                     <tr>
                     {% for y in x %}
-                        <td>{{ y }}</td>
+                        <th>{{ y }}</th>
                     {% endfor %}
                     </tr>
                 </thead>
