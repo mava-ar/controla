@@ -3,23 +3,24 @@
 
 {% block supervisor_content %}
     <div class="col-sm-12">
-    <form class="form-inline" method="GET" action="." role="form">
+    <form class="form-inline" method="GET" action="." role="form" id="report-form">
         <fieldset>
             <legend>Rango de fechas</legend>
             <div class="form-group">
-                <label class="sr-only" for="fecha_desde" class="control-label">Fecha desde: </label>
+                <label class="sr-only control-label" for="fecha_desde">Fecha desde: </label>
                 <div class="input-group date">
                     <input type="text" name="fecha_desde" id="fecha_desde"  class="form-control datepicker"
                            placeholder="Fecha desde" value="{{ fecha_desde|date:"d/m/Y" }}">
                 </div>
             </div>
             <div class="form-group">
-                <label class="sr-only" for="fecha_hasta" class="control-label">Fecha hasta:</label>
+                <label class="sr-only control-label" for="fecha_hasta">Fecha hasta:</label>
                 <div class="input-group date">
                     <input type="text" name="fecha_hasta" id="fecha_hasta"  class="form-control datepicker"
                            placeholder="Fecha hasta" value="{{ fecha_hasta|date:"d/m/Y" }}">
                 </div>
             </div>
+            {% block extra_field_filter %}{% endblock %}
             <div class="form-group">
                 <a type="input" class="btn btn-info" id="btn-hoy">Hoy</a>
             </div>
@@ -48,7 +49,7 @@
             $(document).ready(function () {
                 $("[data-actions=export]").click(function (e) {
                     e.preventDefault();
-                    window.location = $(this).data("url") + "?fecha_desde=" + $("#fecha_desde").val() + "&fecha_hasta=" + $("#fecha_hasta").val();
+                    window.location = $(this).data("url") + '?' + $("#report-form").serialize(); //"?fecha_desde=" + $("#fecha_desde").val() + "&fecha_hasta=" + $("#fecha_hasta").val();
                 });
 
                 $("#btn-hoy").click(function(e){

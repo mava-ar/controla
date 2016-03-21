@@ -1,0 +1,40 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress frontend_tags  %}
+{% block report %}active{% endblock %}
+{% block sub_title %}Asistencia por CC{% endblock %}
+{% block total_report %}<span class="panel text-primary">Mostrando {{ table|length|add:"-1" }} registros.</span>{% endblock %}
+
+
+{% block btn_export %}
+    <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_asistencia_cc' %}">Exportar</a>
+{%  endblock %}
+{% block data_table %}
+    <table class="table table-bordered table-striped table-hover sticky-table-headers" >
+        {% for x in table %}
+            {% if forloop.first %}
+                <thead>
+                    <tr>
+                    {% for y in x %}
+                        <td>{{ y }}</td>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+
+            {% else %}
+                <tr>
+                {% for y in x %}
+                    {% if forloop.last %}
+                        <td><strong>{{ y }} %</strong></td>
+                    {% else %}
+                    <td>{{ y }}</td>
+                    {% endif %}
+                {%  endfor %}
+                </tr>
+            {% endif %}
+            {% if forloop.last %}
+                </tbody>
+            {% endif %}
+        {% endfor %}
+    </table>
+{%  endblock %}

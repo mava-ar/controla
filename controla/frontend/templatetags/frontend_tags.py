@@ -1,4 +1,3 @@
-
 from django.template.defaulttags import register
 from frontend.stats import sort_dict
 
@@ -26,3 +25,10 @@ def percentage(data, num_decimal=1):
         return '{0:.{prec}f}'.format(data, prec=num_decimal)
     except:
         return ''
+
+
+@register.filter
+def hide_zero(data):
+    if data == 0:
+        return ''
+    return data

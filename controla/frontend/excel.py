@@ -128,7 +128,7 @@ class ExportToExcel(ExportExcelMixin):
         worksheet_s.freeze_panes(1, 1)
         return self.prepare_response()
 
-    def fill_asistencia_personas(self, context):
+    def fill_asistencia_x_estado(self, context):
         worksheet_s_name = "Datos exportados"
         worksheet_s = self.workbook.add_worksheet(worksheet_s_name)
         row = 0
@@ -145,5 +145,29 @@ class ExportToExcel(ExportExcelMixin):
             row += 1
         worksheet_s.set_column(0, 0, 40)
         worksheet_s.autofilter('A1:A1')
+        worksheet_s.freeze_panes(1, 1)
+        return self.prepare_response()
+
+    def fill_asistencia_proyecto(self, context):
+        worksheet_s_name = "Datos exportados"
+        worksheet_s = self.workbook.add_worksheet(worksheet_s_name)
+        row = 0
+        for item in context["table"]:
+            if row == 0:
+                worksheet_s.write_row(row, 0, item, self.style_dict["header"])
+            else:
+                it = 0
+                for x in item:
+
+                    try:
+                        cal = float(x)
+                    except:
+                        cal = 0
+                    worksheet_s.write(
+                            row, it, cal/100 if it == 4 else x , self.style_dict["normal_perc"] if it == 4 else self.style_dict["normal"])
+                    it += 1
+            row += 1
+        worksheet_s.set_column(0, 4, 25)
+        worksheet_s.autofilter('A1:E1')
         worksheet_s.freeze_panes(1, 1)
         return self.prepare_response()

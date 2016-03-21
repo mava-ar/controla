@@ -7,13 +7,21 @@
 {% block content %}
     <ul class="nav nav-pills">
       <li class="{% block active_index %}{% endblock %}"><a href="{% url 'index' %}">Panel</a></li>
-      <li class="{% block active_percentual %}{% endblock %}"><a href="{% url 'supervisor_frontend:datos_porcentuales' %}">Datos porcentuales</a></li>
-      <li class="{% block active_x_persona %}{% endblock %}"><a href="{% url 'supervisor_frontend:asistencia_persona' %}">Asistencia por persona</a></li>
-      <li class="{% block active_alta_asistencia %}{% endblock %}"><a href="{% url 'supervisor_frontend:index_responsable' %}">Alta de asistencia por Responsable</a></li>
 
+      <li class="{% block active_alta_asistencia %}{% endblock %}"><a href="{% url 'supervisor_frontend:index_responsable' %}">Alta de asistencia por Responsable</a></li>
+      <li class="item-menu dropdown {% block report %}{% endblock %}">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Reportes <span><b class="caret"></b></span>
+        </a>
+          <ul class="dropdown-menu">
+              <li><a href="{% url 'supervisor_frontend:datos_porcentuales' %}">Datos porcentuales</a></li>
+              <li><a href="{% url 'supervisor_frontend:asistencia_estado' %}">Datos acumulativos</a></li>
+              <li><a href="{% url 'supervisor_frontend:porcentaje_persona_proyecto' %}">Asistencia por CC</a></li>
+          </ul>
+      </li>
     </ul>
     {% block subtitle %}
-        <h2 class="main-title">Control de ausentismo</h2>
+        <h2 class="main-title">{% block sub_title %}Control de ausentismo{% endblock %}</h2>
     {% endblock %}
     {% block supervisor_content %}{% endblock %}
 {% endblock %}

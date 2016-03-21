@@ -15,7 +15,8 @@ from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, Base
                                  BaseVerAsistenciaByDate, BaseBajaPersonalView)
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
-                            get_datos_porcentuales, get_asistencia_persona, get_proyectos_estados)
+                            get_datos_porcentuales, get_asistencia_persona, get_proyectos_estados,
+                            get_porcentaje_cc)
 from frontend.excel import ExportToExcel
 from frontend.reports import PdfPrintAltaAsistencia
 
@@ -44,12 +45,23 @@ class DatosPorcentualesView(BaseReportView, TemplateView):
         return data
 
 
-class AsistenciaPorPersonaView(BaseReportView, TemplateView):
-    template_name = "frontend/asistenca_persona_supervisor.html"
+class AsistenciaPorEstadoView(BaseReportView, TemplateView):
+    template_name = "frontend/asistenca_estado_supervisor.html"
 
     def get_context_data(self, **kwargs):
-        data = super(AsistenciaPorPersonaView, self).get_context_data(**kwargs)
-        data["table"] = get_asistencia_persona(data["fecha_desde"], data["fecha_hasta"])
+        data = super(AsistenciaPorEstadoView, self).get_context_data(**kwargs)
+        data["table"] = get_asistencia_persona(
+            data["fecha_desde"], data["fecha_hasta"], group_by=data["group_by"])
+        return data
+
+
+class PorcentajePersonaProyectoView(BaseReportView, TemplateView):
+    template_name = "frontend/porcentaje_x_proyecto_supervisor.html"
+
+    def get_context_data(self, **kwargs):
+        data = super(PorcentajePersonaProyectoView, self).get_context_data(**kwargs)
+        data["table"] = get_porcentaje_cc(
+            data["fecha_desde"], data["fecha_hasta"])
         return data
 
 
@@ -79,16 +91,32 @@ class ExportDatosPorcentualesView(BaseReportView, TemplateView):
         return response
 
 
-class ExportAsistenciaPersonaView(BaseReportView, TemplateView):
+class ExportAsistenciaPorEstadoView(BaseReportView, TemplateView):
     def get_context_data(self, **kwargs):
-        data = super(ExportAsistenciaPersonaView, self).get_context_data(**kwargs)
-        data["table"] = get_asistencia_persona(data["fecha_desde"], data["fecha_hasta"])
+        data = super(ExportAsistenciaPorEstadoView, self).get_context_data(**kwargs)
+        data["table"] = get_asistencia_persona(
+            data["fecha_desde"], data["fecha_hasta"], group_by=data["group_by"])
         return data
 
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename=Report.xlsx'
-        xlsx_data = ExportToExcel().fill_asistencia_personas(self.get_context_data(**kwargs))
+        xlsx_data = ExportToExcel().fill_asistencia_x_estado(self.get_context_data(**kwargs))
+        response.write(xlsx_data)
+        return response
+
+
+class ExportPorcentajePersonaProyectoView(BaseReportView, TemplateView):
+    def get_context_data(self, **kwargs):
+        data = super(ExportPorcentajePersonaProyectoView, self).get_context_data(**kwargs)
+        data["table"] = get_porcentaje_cc(
+            data["fecha_desde"], data["fecha_hasta"])
+        return data
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Report.xlsx'
+        xlsx_data = ExportToExcel().fill_asistencia_proyecto(self.get_context_data(**kwargs))
         response.write(xlsx_data)
         return response
 
@@ -205,9 +233,11 @@ index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 baja_personal = BajaPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
-asistencia_persona = AsistenciaPorPersonaView.as_view()
+asistencia_persona = AsistenciaPorEstadoView.as_view()
+porcentaje_persona_proyecto = PorcentajePersonaProyectoView.as_view()
 export_porcentual = ExportDatosPorcentualesView.as_view()
-export_asistencia = ExportAsistenciaPersonaView.as_view()
+export_asistencia = ExportAsistenciaPorEstadoView.as_view()
+export_asistencia_cc = ExportPorcentajePersonaProyectoView.as_view()
 index_responsable = IndexResponsable.as_view()
 ver_proyectos_ajax = VerProyectosAjaxView.as_view()
 alta_asistencia = AltaAsistenciaView.as_view()

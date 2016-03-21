@@ -144,6 +144,7 @@ class BaseReportView(SupervisorViewMixin):
             start, end = get_30_days()
             data["fecha_desde"] = start
             data["fecha_hasta"] = end
+        data["group_by"] = self.request.GET.get("group_by", None)
         return data
 
     def dispatch(self, request, *args, **kwargs):

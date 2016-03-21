@@ -1,0 +1,71 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress frontend_tags  %}
+{% block report %}active{% endblock %}
+{% block total_report %}<span class="panel text-primary">Mostrando {{ table|length|add:"-1" }} registros.</span>{% endblock %}
+{% block sub_title %}Datos acumulativos{% endblock %}
+{% block extra_field_filter %}
+    <div class="form-group">
+        <label class="sr-only control-label" for="id-group_by" >Agrupar por:</label>
+        <select name="group_by" id="id-group_by" class="form-control">
+            <option value="persona" {% if group_by == 'persona' %} selected{% endif %}>Persona</option>
+            <option value="responsable" {% if group_by == 'responsable' %} selected{% endif %}>Responsable</option>
+        </select>
+    </div>
+{% endblock %}
+
+{% block btn_export %}
+    <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_asistencia' %}">Exportar</a>
+{%  endblock %}
+{% block data_table %}
+    <table class="table table-bordered table-striped table-hover sticky-table-headers" >
+        {% for x in table %}
+            {% if forloop.first %}
+                <thead>
+                    <tr>
+                    {% for y in x %}
+                        <td>{{ y }}</td>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% elif forloop.last %}
+                 <tr>
+                {% for y in x %}
+                    <td><strong>{{ y }}</strong></td>
+                {%  endfor %}
+                </tr>
+                </tbody>
+            {% else %}
+                <tr>
+                {% for y in x %}
+                    {% if forloop.last %}
+                        <td><strong>{{ y }}</strong></td>
+                    {% else %}
+                    <td>{{ y|hide_zero }}</td>
+                    {% endif %}
+                {%  endfor %}
+                </tr>
+            {% endif %}
+
+        {% endfor %}
+    </table>
+{%  endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {% compress js %}
+        <script type="text/javascript" >
+            $(document).ready(function() {
+{#                $("#datatables").DataTable({#}
+{#                    "ordering": false,#}
+{#                    "info": false,#}
+{#                    "paging": false,#}
+{#                    "fixedHeader": true,#}
+{#                    "language": {#}
+{#                        "url": "/static/frontend/i18n/spanish.json"#}
+{#                    }#}
+{#                });#}
+            });
+        </script>
+    {% endcompress %}
+{% endblock %}

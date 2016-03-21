@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from django.db.models import Count, Case, When
 
-from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado
+from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado, Responsable
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,12 @@ def sort_dict(adict, reverse=False):
 
 
 def evolucion_registros_asistencia(start_date, ends_date):
-
+    """
+    Devuelve los datos para el gráfico de codigo de barras con los presentes y ausentes
+    :param start_date:
+    :param ends_date:
+    :return:
+    """
     qs = RegistroAsistencia.objects.select_related('estado', 'persona').filter(
             asistencia__fecha__gte=start_date,
             asistencia__fecha__lte=ends_date).values_list(
@@ -189,27 +194,87 @@ def get_datos_porcentuales(start, end):
     return report, totales_rango
 
 
-def get_asistencia_persona(start, end):
+def get_asistencia_persona(start, end, group_by):
+    """
+    Reportes de cantidad de registros por estado por día, agrupados por group_by
+    :param start: fecha limite inicial
+    :param end: fecha limite final
+    :param group_by: agrupador
+    :return: reporte
+    """
+    if group_by is None:
+        group_by = 'persona'
+    processed = defaultdict(dict)
+    header = list()
     estados = Estado.objects.values_list('codigo', flat=True)
     qs = RegistroAsistencia.objects.filter(
-            asistencia__fecha__gte=start,
-            asistencia__fecha__lte=end).values(
+        asistencia__fecha__gte=start, asistencia__fecha__lte=end)
+    if group_by == 'persona':
+        qs = qs.values(
             'persona__apellido', 'persona__nombre', 'estado__codigo').annotate(cant=Count('pk')).order_by('persona')
+        for it in qs:
+            processed["{} {}".format(it["persona__apellido"], it["persona__nombre"])][it['estado__codigo']]=it["cant"]
+        header.append("Nombre")
+    elif group_by == 'responsable':
+        qs = qs.values('asistencia__proyecto__responsable_rel__persona', 'estado__codigo').annotate(cant=Count('persona_id')).order_by('asistencia__proyecto__responsable_rel__persona__apellido')
+        responsables = dict([(x[0], "{} {}".format(x[1], x[2])) for x in Responsable.objects.values_list(
+            'persona', 'persona__apellido', 'persona__nombre').distinct()])
 
-    processed = defaultdict(dict)
-    for it in qs:
-        processed["{} {}".format(it["persona__apellido"], it["persona__nombre"])][it['estado__codigo']]=it["cant"]
+        for it in qs:
+            processed[responsables[it["asistencia__proyecto__responsable_rel__persona"]]][it['estado__codigo']]=it["cant"]
+        header.append("Responsable")
 
     report = list()
-    header = ["Nombre", ]
     header.extend(estados)
+    header.append("Total")
     report.append(header)
-
+    values = list()
     for nombre, data in sort_dict(processed):
+        total_row = 0
+
         aux = list()
         aux.append(nombre)
         for est in estados:
-            aux.append(data.get(est, ''))
+            val = data.get(est, 0)
+            aux.append(val)
+            total_row += val
+        aux.append(total_row)
+        values.append(aux[1:])
         report.append(aux)
+    totales = [sum(i) for i in zip(*values)]
+    totales.insert(0, "Total general")
+    report.append(totales)
+    return report
 
+
+def get_porcentaje_cc(start, end):
+    """
+    Muestra el porcentaje de asistencia por persona en cada proyecto
+    :param start: fecha limite inicial
+    :param end: fecha limite final
+    :return: reporte
+    """
+    processed = defaultdict(dict)
+    totales = dict()
+    header = ["CCT", "APELLIDO NOMBRE", "C.U.I.L.", "PROYECTO", "Cuenta en ESTADO"]
+    qs = RegistroAsistencia.objects.filter(
+        asistencia__fecha__gte=start, asistencia__fecha__lte=end)
+    qs = qs.values('persona__cct__nombre', 'persona__apellido','persona__nombre',
+                   'persona__cuil', 'asistencia__proyecto__nombre',
+                   ).annotate(est=Count('pk'))
+    for it in qs:
+        persona = "{} {}".format(it["persona__apellido"], it["persona__nombre"])
+        processed[persona][it['asistencia__proyecto__nombre']]=it
+        val = totales.get(persona, 0) + it["est"]
+        totales[persona] = val
+
+    report = list()
+    report.append(header)
+
+    for nombre, data in sort_dict(processed):
+        for row, data1 in data.items():
+            aux = list()
+            porc = data1["est"] * 100 / totales.get(nombre)
+            aux.extend([data1["persona__cct__nombre"], nombre, data1["persona__cuil"], row, "{0:.2f}".format(porc)])
+            report.append(aux)
     return report
