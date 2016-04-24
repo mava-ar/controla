@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 def fill_codigo(apps, schema_editor):
     Proyecto = apps.get_model("modelo", "Proyecto")
-    for proy in Proyecto._default_manager.all():
+    for proy in Proyecto.all_proyects.all():
         proy.codigo = "{0:05d}".format(proy.pk)
         proy.save()
 
