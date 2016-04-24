@@ -17,3 +17,4 @@ reportlab
 celery==3.1.20
 redis==2.10.5
 django-overextends
+django-import-export==0.4.5

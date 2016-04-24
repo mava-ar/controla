@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db.models import Q
 
 from simple_history.admin import SimpleHistoryAdmin
+from import_export.admin import ExportActionModelAdmin
 
 from .models import Estado, Proyecto, CCT, Persona, Asistencia, RegistroAsistencia, Responsable, MovimientoPersona
 from .actions import dar_de_baja
@@ -15,9 +16,9 @@ class EstadoAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(Proyecto)
-class ProyectoAdmin(SimpleHistoryAdmin):
-    list_display = ('nombre', 'total_personas', 'responsable', 'activo_status')
-    search_fields = ('nombre', )
+class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
+    list_display = ('nombre', 'codigo', 'total_personas', 'responsable', 'activo_status')
+    search_fields = ('nombre', 'codigo', )
     ordering = ('fecha_baja', )
 
     actions = [dar_de_baja, ]

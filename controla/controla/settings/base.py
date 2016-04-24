@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'simple_history',
     'mailer',
     'overextends',
+    'import_export',
 
     'dj_utils',
     'modelo',
