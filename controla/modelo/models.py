@@ -42,7 +42,7 @@ class Proyecto(BaseModelWithHistory):
 
     """
     nombre = models.CharField("nombre", max_length=255, unique=True)
-    codigo = models.CharField("codigo", max_length=255, unique=True)
+    codigo = models.CharField("codigo", max_length=255)
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
     history = HistoricalRecords()
 

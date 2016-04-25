@@ -14,11 +14,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='historicalproyecto',
             name='codigo',
-            field=models.CharField(verbose_name='codigo', max_length=255, db_index=True),
+            field=models.CharField(default='-', max_length=255, verbose_name='codigo'),
+            preserve_default=False,
         ),
         migrations.AlterField(
             model_name='proyecto',
             name='codigo',
-            field=models.CharField(verbose_name='codigo', max_length=255, unique=True),
+            field=models.CharField(max_length=255, verbose_name='codigo'),
         ),
     ]
