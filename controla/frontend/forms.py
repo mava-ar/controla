@@ -77,7 +77,7 @@ class FusionarProyectosForm(forms.Form):
         empty_label="Seleccione el proyecto destino",
         help_text="Seleccione el proyecto que recibirá todos los datos de los proyectos abajo seleccioandos.")
     proyectos_fusion = forms.ModelMultipleChoiceField(
-        Proyecto.all_proyects.all(), label="Seleccione todos los proyectos a fusionar",
+        Proyecto.all_projects.all(), label="Seleccione todos los proyectos a fusionar",
         help_text="Seleccione todos los proyectos que fusionará con el proyecto destino. Estos proyectos serán "
                   "eliminados si el proceso es satisfactorio")
     nuevo_nombre = forms.CharField(max_length=255, required=False, min_length=4,

@@ -42,7 +42,7 @@ class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
         return actions
 
     def get_queryset(self, request):
-        return Proyecto.all_proyects.all()
+        return Proyecto.all_projects.all()
 
     def has_delete_permission(self, request, obj=None):
         return False

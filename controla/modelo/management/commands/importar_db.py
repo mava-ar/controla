@@ -123,7 +123,7 @@ class Command(BaseCommand):
             return p
         else:
             try:
-                p = Proyecto.all_proyects.get(nombre=nombre.strip())
+                p = Proyecto.all_projects.get(nombre=nombre.strip())
             except Proyecto.DoesNotExist:
                 p = Proyecto(nombre=nombre.strip())
                 p._history_date = self.fecha

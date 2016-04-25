@@ -48,7 +48,7 @@ class Proyecto(BaseModelWithHistory):
 
     objects = ProyectoManager()
     con_personas = ProyectoConPersonasManager()
-    all_proyects = models.Manager()
+    all_projects = models.Manager()
 
     class Meta:
         verbose_name = "proyecto"
@@ -57,7 +57,7 @@ class Proyecto(BaseModelWithHistory):
 
     def clean(self):
         super(Proyecto, self).clean()
-        if not self.pk and Proyecto.all_proyects.filter(nombre=self.nombre).exists():
+        if not self.pk and Proyecto.all_projects.filter(nombre=self.nombre).exists():
             raise ValidationError({'nombre': ["Nombre de proyecto existente. Por favor, elija otro!",]})
 
     def __str__(self):
