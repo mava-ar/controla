@@ -32,3 +32,11 @@ def hide_zero(data):
     if data == 0:
         return ''
     return data
+
+
+@register.assignment_tag
+def calc_porc_int(num, div):
+    if div == 0:
+        return "0"
+    val = int(num * 100 / div)
+    return str(val)

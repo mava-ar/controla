@@ -247,6 +247,9 @@ class MovimientoPersona(BaseModel):
         verbose_name = "movimiento de persona"
         verbose_name_plural = "movimiento de personas"
 
+    def __str__(self):
+        return "{} el {}".format(self.get_situacion_display(), self.fechahora)
+
     @classmethod
     def _generar_movimiento(cls, persona, tipo, fecha, usuario=None):
         movimiento = MovimientoPersona(persona=persona, situacion=tipo, fechahora=fecha)

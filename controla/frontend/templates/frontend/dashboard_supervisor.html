@@ -3,35 +3,36 @@
 {% block active_index %}active{% endblock %}
 {% block supervisor_content %}
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Total de toma de asistencia (Proyecto)
                 </div>
-                <div class="panel-body">
-                    <h3>{{ perc_asis_proyecto }}% de planillas enviadas</h3>
+                <div class="panel-body" title="{{ total_proy }} proyectos activos, {{ num_asis_proy }} enviaron su asistencia.">
+                    {% calc_porc_int total_proy num_asis_proy as proc_proy %}
+                    <h3>{{ proc_proy }}% de planillas enviadas</h3>
                     <div class="progress progress-striped active">
-                    <div class="progress-bar" style="width: {{ perc_asis_proyecto }}%"></div>
-
+                        <div class="progress-bar" style="width: {{ proc_proy }}%"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Total de toma de asistencia (Personas)
                 </div>
-                <div class="panel-body">
-                    <h3>{{ perc_asis_persona }}% del personal registrado</h3>
+                <div class="panel-body" title="{{ total_persona }} personas activas, {{ num_asis_persona }} con resgistro de asistencia.">
+                    {% calc_porc_int total_persona num_asis_persona as proc_pers %}
+                    <h3>{{ proc_pers }}% del personal registrado</h3>
                     <div class="progress progress-striped active">
-                    <div class="progress-bar" style="width: {{ perc_asis_persona }}%"></div>
+                    <div class="progress-bar" style="width: {{ proc_pers }}%"></div>
 
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Porcentaje de personal activo
@@ -42,6 +43,19 @@
                     <div class="progress-bar" style="width: {{ perc_no_ocioso }}%"></div>
 
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Resumen
+                </div>
+                <div class="panel-body">
+                    <p>Total proyectos activos: <strong>{{ total_proy }}</strong></p>
+                    <p>Total personas activas: <strong>{{ total_persona }}</strong></p>
+                    <p>Personas en proyectos inactivos: <strong>{{ pers_sin_proyecto }}</strong></p>
+
                 </div>
             </div>
         </div>
@@ -94,15 +108,20 @@
                             <tr>
                                 <th>Proyectos</th>
                                 <th>Responsables</th>
+                                <th>Registros de asistencia</th>
                                 <th>Personas en el proyecto</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for x in proyectos_estados %}
-                            <tr class="{% if x.3 > 0 %}success{% else %}danger{% endif %}">
-                                <td>{{ x.0 }}</td>
-                                <td>{{ x.1 }}, {{ x.2 }}</td>
-                                <td>{% if x.3 > 0 %}{{ x.3 }}{% else %}--{% endif %}</td>
+                            <tr class="{% if x.4 > 0 %}success{% else %}danger{% endif %}">
+                                <td>{{ x.1 }}</td>
+                                <td>{{ x.3 }}, {{ x.2 }}</td>
+                                <td>
+                                    {% if x.4 > 0 %}{{ x.4 }}
+                                        {% if x.4 != x.5 %} <a href="{% url "supervisor_frontend:ver_asistencia" x.0 %}" class="label label-warning">¡Revisar! Diferencia encontrada.</a>{% endif %}
+                                    {% else %}--{% endif %}</td>
+                                <td>{{ x.5 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

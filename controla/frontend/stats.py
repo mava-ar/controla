@@ -12,23 +12,31 @@ logger = logging.getLogger(__name__)
 def get_proyectos_estados(hoy=None):
     if hoy is None:
         hoy = datetime.now()
-    data = list(Proyecto.con_personas.annotate(
-        ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk')))).values_list(
-        'nombre', 'responsable_rel__persona__apellido', 'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
-    return data
+    data = list(
+        Proyecto.con_personas.annotate(
+            ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk')))
+        ).values_list('pk', 'nombre', 'responsable_rel__persona__apellido',
+                      'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
+    total = dict(Proyecto.con_personas.annotate(
+        total=Count(Case(When(personas_involucradas__fecha_baja__isnull=True,
+                              then='personas_involucradas__pk')))
+        ).values_list('pk', 'total'))
+    report = []
+    for item in data:
+        report.append(item + (total.get(item[0], 0),))
+    return report
 
 
 def porcentaje_asistencia_proyecto(hoy=None):
     if hoy is None:
         hoy = datetime.now()
     total = Proyecto.con_personas.count()
-    if total == 0:
-        return 0
 
     perc = Proyecto.con_personas.filter(asistencias__fecha=hoy).count()
-    val = int(perc * 100 / total)
-    logger.debug("Total proyectos: {} | Proyecto con asistencias: {} | %: {}".format(total, perc, val))
-    return "{}".format(val)
+    # calculamos en el template
+    # val = int(perc * 100 / total)
+    # logger.debug("Total proyectos: {} | Proyecto con asistencias: {} | %: {}".format(total, perc, val))
+    return total, perc
 
 
 def porcentaje_actividad(hoy=None):
@@ -48,13 +56,12 @@ def porcentaje_asistencia_persona(hoy=None):
     if hoy is None:
         hoy = datetime.now()
     total = Persona.objects.filter(proyecto__isnull=False).count()
-    if total == 0:
-        return 0
 
     registros = Persona.objects.filter(registro_asistencia__asistencia__fecha=hoy, proyecto__isnull=False).count()
-    val = int(registros * 100 / total)
-    logger.debug("Total personas: {} | Total registros hoy: {} | %: {}".format(total, registros, val))
-    return "{}".format(val)
+    # calculamos en el template
+    # val = int(registros * 100 / total)
+    # logger.debug("Total personas: {} | Total registros hoy: {} | %: {}".format(total, registros, val))
+    return total, registros # "{}".format(val)
 
 
 def daterange(start_date, end_date):
@@ -71,9 +78,6 @@ def sort_dict(adict, reverse=False):
 def evolucion_registros_asistencia(start_date, ends_date):
     """
     Devuelve los datos para el gráfico de codigo de barras con los presentes y ausentes
-    :param start_date:
-    :param ends_date:
-    :return:
     """
     qs = RegistroAsistencia.objects.select_related('estado', 'persona').filter(
             asistencia__fecha__gte=start_date,
@@ -216,7 +220,8 @@ def get_asistencia_persona(start, end, group_by):
             processed["{} {}".format(it["persona__apellido"], it["persona__nombre"])][it['estado__codigo']]=it["cant"]
         header.append("Nombre")
     elif group_by == 'responsable':
-        qs = qs.values('asistencia__proyecto__responsable_rel__persona', 'estado__codigo').annotate(cant=Count('persona_id')).order_by('asistencia__proyecto__responsable_rel__persona__apellido')
+        qs = qs.values('asistencia__proyecto__responsable_rel__persona', 'estado__codigo').annotate(
+            cant=Count('persona_id')).order_by('asistencia__proyecto__responsable_rel__persona__apellido')
         responsables = dict([(x[0], "{} {}".format(x[1], x[2])) for x in Responsable.objects.values_list(
             'persona', 'persona__apellido', 'persona__nombre').distinct()])
 

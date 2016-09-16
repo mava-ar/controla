@@ -3,13 +3,17 @@
 MIGR="../migracion"
 # hacemos la carpeta que contendrá los archivos
 mkdir $MIGR
+# exportamos los datos de los usuarios
+echo -n Exportando usuarios...
+python manage.py exportar_usuarios $MIGR/usuarios.csv
+echo OK
 # exportamos los datos de organizacion a json
 echo -n Exportando modelos para organizacion...
-python manage.py dumpdata --indent 4 --natural-foreign modelo.Proyecto modelo.CCT modelo.Persona modelo.MovimientoPersona modelo.HistoricalPersona > $MIGR/organizacion.json
+python manage.py dumpdata --indent 4 --natural-foreign --all modelo.Proyecto modelo.CCT modelo.Persona modelo.MovimientoPersona > $MIGR/organizacion.json
 echo OK
 # exportamos los datos de asistencia a json
 echo -n Exportando modelos para asistencia...
-python manage.py dumpdata --indent 4 --natural-foreign modelo.Estado modelo.responsable > $MIGR/asistencia.json
+python manage.py dumpdata --indent 4 --natural-foreign --all modelo.Estado modelo.responsable > $MIGR/asistencia.json
 echo OK
 # renombrar el nombre de la 
 echo -n Renombrando json...
