@@ -119,7 +119,7 @@
                                 <td>{{ x.3 }}, {{ x.2 }}</td>
                                 <td>
                                     {% if x.4 > 0 %}{{ x.4 }}
-                                        {% if x.4 != x.5 %} <a href="{% url "supervisor_frontend:ver_asistencia" x.0 %}" class="label label-warning">¡Revisar! Diferencia encontrada.</a>{% endif %}
+                                        {% if x.4 != x.5 %} <a href="{% url "supervisor_frontend:asistencia_del_dia" x.0 %}" class="label label-warning">¡Revisar! Diferencia encontrada.</a>{% endif %}
                                     {% else %}--{% endif %}</td>
                                 <td>{{ x.5 }}</td>
                             </tr>

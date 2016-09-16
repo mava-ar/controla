@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import TemplateView, FormView
+from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView, FormView, RedirectView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.transaction import atomic
 
@@ -191,6 +192,24 @@ class VerAsistenciaAjaxView(SupervisorViewMixin, BaseVerAsistenciaAjaxView):
     pass
 
 
+class AsistenciaHoyRedirect(SupervisorViewMixin, RedirectView):
+    permanent = False
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Proyecto, pk=self.kwargs.get('pk'))
+        return super(AsistenciaHoyRedirect, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        hoy = datetime.now()
+        asistencia_hoy = self.object.asistencias.filter(fecha=hoy)
+        if not asistencia_hoy:
+            messages.add_message(self.request, messages.ERROR, "Aún no existe el registro de asistencia del día de hoy")
+            self.url = reverse("supervisor_frontend:index")
+        else:
+            self.url = reverse("supervisor_frontend:ver_asistencia", kwargs={'pk': asistencia_hoy.first().pk})
+        return super(AsistenciaHoyRedirect, self).get(request, *args, **kwargs)
+
+
 class FusionarProyectosView(SupervisorViewMixin, FormView):
     template_name = 'admin/fusionar_proyectos.html'
     form_class = FusionarProyectosForm
@@ -247,3 +266,4 @@ update_notification = NotificacionesView.as_view()
 ver_asistencia_fecha = VerAsistenciaByDate.as_view()
 ver_asistencia_ajax = VerAsistenciaAjaxView.as_view()
 fusionar_proyectos = FusionarProyectosView.as_view()
+asistencia_del_dia = AsistenciaHoyRedirect.as_view()
