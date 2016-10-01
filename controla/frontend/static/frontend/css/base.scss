@@ -22,7 +22,7 @@ body.auth {
 footer {
   background-color: $color-bg-primary;
   height: 60px;
-  padding: 20px 0;
+  padding: 15px 0;
   text-align: center;
 
   a, a:hover {
@@ -71,6 +71,10 @@ form {
   }
 }
 
+.spacer20 {
+  display: inline;
+  margin: 0 10px;
+}
 
 #chart svg {
   height: 350px;
@@ -92,7 +96,6 @@ form {
     border-radius: 4px;
   }
 }
-
 
 
 .pace {

@@ -1,4 +1,7 @@
-{% now "Y" %} - <a href="http://mava.com.ar">MAVA</a> - Ingeniería Informática
+{% load static %}
+<img src="{% static "frontend/img/footer-zille.png" %}" /> <span class="spacer20"></span>
+Desarrollado por <a href="http://mava.com.ar"> <img class="img-resposive" src="{% static 'frontend/img/footer-logo.png' %}" /></a> <span class="spacer20"></span>
+{% now "Y" %} &copy; Copyright.
 {% if theme %}
 <br>Theme DjangoSuit.com by <a href="http://djangosuit.com" target="_blank">DjangoSuit.com</a>
 {% endif %}
