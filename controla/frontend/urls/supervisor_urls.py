@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^$', views.index, name="index"),
     url(r'^reasignar/$', views.reasignar_personal, name="reasignar_personal"),
     url(r'^personal/$', views.baja_personal, name="baja_personal"),
+    url(r'^personal/(?P<pk>\d+)/$', views.ver_datos_persona, name="ver_datos_persona"),
     url(r'^datos_porcentuales/$', views.datos_porcentuales, name="datos_porcentuales"),
     url(r'^asistencia_estado/$', views.asistencia_persona, name="asistencia_estado"),
     url(r'^persona_proyecto/$', views.porcentaje_persona_proyecto, name="porcentaje_persona_proyecto"),
@@ -18,6 +19,7 @@ urlpatterns = [
     url(r'^asistencia/(?P<pk>\d+)/$', views.ver_asistencia, name="ver_asistencia"),
     url(r'^asistencia/(?P<pk>\d+)/export2pdf$', views.export_asistencia_pdf, name="export_asistencia_pdf"),
     url(r'^asistencia/(?P<pk>\d+)/alta/$', views.alta_asistencia, name="alta_asistencia"),
+
     url(r'^notificaciones$', views.update_notification, name="update_notification"),
     url(r'^ver_asistencia$', views.ver_asistencia_fecha, name="ver_asistencia_fecha"),
     url(r'^ver_asistencia_ajax/$', views.ver_asistencia_ajax, name="ver_asistencia_ajax"),

@@ -1,0 +1,18 @@
+controla_data:
+  image: busybox
+  volumes:
+    - /var/lib/mysql
+  command: "true"
+
+controla_db:
+  image: mariadb
+  environment:
+    MYSQL_DATABASE: controla
+    MYSQL_USER: zille
+    DATABASE_PASSWORD: zille123
+    MYSQL_ROOT_PASSWORD: zille123 
+  ports:
+    - "3306:3306"
+  volumes_from:
+    - controla_data 
+

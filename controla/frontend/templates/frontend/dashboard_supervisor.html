@@ -1,6 +1,7 @@
 {% extends "frontend/base_supervisor.html" %}
 {% load bootstrap3 frontend_tags compress pipeline static %}
 {% block active_index %}active{% endblock %}
+{% block extra_head %}<meta http-equiv="refresh" content="120" />{% endblock %}
 {% block supervisor_content %}
     <div class="row">
         <div class="col-sm-3">
@@ -133,6 +134,7 @@
 
 {% endblock %}
 {% block extra_js %}
+    {{ block.super }}
     {% compress js %}
         {% javascript 'graphics_js' %}
         <script type="text/javascript" >

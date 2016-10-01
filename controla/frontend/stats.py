@@ -283,3 +283,12 @@ def get_porcentaje_cc(start, end):
             aux.extend([data1["persona__cct__nombre"], nombre, data1["persona__cuil"], row, "{0:.2f}".format(porc)])
             report.append(aux)
     return report
+
+def calcular_porcentaje_estado_muestra(persona_id):
+    data = RegistroAsistencia.objects.select_related('asistencia').filter(persona_id=persona_id).values_list(
+        'estado__codigo', 'estado__situacion').annotate(cant=Count('estado_id'))
+    total = 0
+    if data:
+        total = sum([i for i in zip(*data)][2])
+    return total, data
+

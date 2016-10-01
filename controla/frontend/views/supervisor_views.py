@@ -4,12 +4,16 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, FormView, RedirectView
+from django.views.generic import TemplateView, FormView, RedirectView, DetailView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.transaction import atomic
 
+from django_filters import views, FilterSet
+
+from modelo.filters import DetallePersonaFilter
 from modelo.models import Responsable, Asistencia, Proyecto, Persona, RegistroAsistencia
-from frontend.views.mixins import SupervisorViewMixin
+from frontend.views.mixins import SupervisorViewMixin, SupervisorBuscarPersonaMixin
 from frontend.forms import FusionarProyectosForm
 from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, BaseDetailAsistenciaView,
                                  BaseAltaAsistenciaView, BaseNotificacionesView, BaseVerAsistenciaAjaxView,
@@ -17,12 +21,12 @@ from frontend.views.base import (BaseReasignarPersonalView, BaseReportView, Base
 from frontend.stats import (porcentaje_asistencia_proyecto, porcentaje_actividad,
                             porcentaje_asistencia_persona, evolucion_registros_asistencia,
                             get_datos_porcentuales, get_asistencia_persona, get_proyectos_estados,
-                            get_porcentaje_cc)
+                            get_porcentaje_cc, calcular_porcentaje_estado_muestra)
 from frontend.excel import ExportToExcel
 from frontend.reports import PdfPrintAltaAsistencia
 
 
-class DashboardView(SupervisorViewMixin, TemplateView):
+class DashboardView(SupervisorViewMixin, SupervisorBuscarPersonaMixin, TemplateView):
     template_name = "frontend/dashboard_supervisor.html"
 
     def get_context_data(self, **kwargs):
@@ -37,7 +41,7 @@ class DashboardView(SupervisorViewMixin, TemplateView):
         return data
 
 
-class DatosPorcentualesView(BaseReportView, TemplateView):
+class DatosPorcentualesView(BaseReportView, SupervisorBuscarPersonaMixin, TemplateView):
     template_name = "frontend/datos_porcentuales_supervisor.html"
 
     def get_context_data(self, **kwargs):
@@ -46,7 +50,7 @@ class DatosPorcentualesView(BaseReportView, TemplateView):
         return data
 
 
-class AsistenciaPorEstadoView(BaseReportView, TemplateView):
+class AsistenciaPorEstadoView(BaseReportView, SupervisorBuscarPersonaMixin, TemplateView):
     template_name = "frontend/asistenca_estado_supervisor.html"
 
     def get_context_data(self, **kwargs):
@@ -56,7 +60,7 @@ class AsistenciaPorEstadoView(BaseReportView, TemplateView):
         return data
 
 
-class PorcentajePersonaProyectoView(BaseReportView, TemplateView):
+class PorcentajePersonaProyectoView(BaseReportView, SupervisorBuscarPersonaMixin, TemplateView):
     template_name = "frontend/porcentaje_x_proyecto_supervisor.html"
 
     def get_context_data(self, **kwargs):
@@ -122,7 +126,7 @@ class ExportPorcentajePersonaProyectoView(BaseReportView, TemplateView):
         return response
 
 
-class IndexResponsable(SupervisorViewMixin, TemplateView):
+class IndexResponsable(SupervisorViewMixin, SupervisorBuscarPersonaMixin, TemplateView):
     template_name = "frontend/index_responsables.html"
 
     def get_context_data(self, **kwargs):
@@ -248,6 +252,28 @@ class FusionarProyectosView(SupervisorViewMixin, FormView):
         return HttpResponseRedirect(reverse(self.get_success_url()))
 
 
+class VerDetallesPersona(SupervisorViewMixin, DetailView):
+
+    model = Persona
+    template_name = "frontend/ver_datos_persona.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super(VerDetallesPersona, self).get_context_data(**kwargs)
+        qs = RegistroAsistencia.objects.select_related('asistencia').filter(persona=self.object).order_by('-asistencia__fecha')
+        ctx['filter'] = DetallePersonaFilter(self.request.GET, queryset=qs)
+        paginator = Paginator(ctx['filter'].qs, 25)
+        try:
+            queryset = paginator.page(self.request.GET.get("page", 1))
+        except PageNotAnInteger:
+            queryset = paginator.page(1)
+        except EmptyPage:
+            queryset = paginator.page(paginator.num_pages)
+        ctx["registros"] = queryset
+        ctx["total"], ctx["resumen"] = calcular_porcentaje_estado_muestra(self.object.pk)
+
+        return ctx
+
+
 index = DashboardView.as_view()
 reasignar_personal = ReasignarPersonalView.as_view()
 baja_personal = BajaPersonalView.as_view()
@@ -267,3 +293,4 @@ ver_asistencia_fecha = VerAsistenciaByDate.as_view()
 ver_asistencia_ajax = VerAsistenciaAjaxView.as_view()
 fusionar_proyectos = FusionarProyectosView.as_view()
 asistencia_del_dia = AsistenciaHoyRedirect.as_view()
+ver_datos_persona = VerDetallesPersona.as_view()

@@ -1,0 +1,113 @@
+{% extends "frontend/layout_base.html" %}
+{% load bootstrap3 frontend_tags compress %}
+{% block index_act %}{% endblock %}
+
+{%  block title %}
+    <h2 class="main-title">{{ object }}
+{#        <a class="pull-right btn btn-success" href="{% url 'admin:modelo_persona_add' %}">Alta de persona</a>#}
+    </h2>
+{% endblock %}
+{% block wide_class %}container{% endblock %}
+{% block content %}
+    <form action="" method="get">
+    <div class="row">
+    {% for field in filter.form %}
+        {% if field.name == 'fecha' %}
+            <div class="col-sm-6">
+            <div class="form-group has-success">
+                <label class="control-label" for="id_fecha">Fecha</label>
+                <div class="input-group">
+                <input type="text" class="form-control datepicker" placeholder="Desde" name="fecha_0">
+              <span class="input-group-addon" id="basic-addon1">-</span>
+              <input type="text" class="form-control datepicker" placeholder="Hasta" name="fecha_1">
+            </div>
+            </div>
+            </div>
+        {% else %}
+        <div class="col-sm-6">{% bootstrap_field field show_help=False  %}</div>
+        {%  endif %}
+    {% endfor %}
+    </div>
+    <input class="btn btn-primary" type="submit" value="Filtrar" />
+    </form>
+    <div class="panel panel-primary">
+            <div class="panel-heading"><h4>Estadística histórica de asistencia</h4>
+        </div>
+        <div class="panel-body">
+            {% for k in resumen %}
+            <div class="col-sm-12 col-md-6">
+                {% calc_porc k.2 total as porc %}
+                <h4>{{ k.1 }} ({{ k.0 }}): <strong>{{ porc|percentage:"2" }}%</strong></h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Proyecto</th>
+                <th>Responsable</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for registro in registros %}
+            <tr>
+            <td>{{ registro.asistencia.fecha|date:'d/m/Y' }}</td>
+            <td>{{ registro.asistencia.nombre_proyecto}}</td>
+            <td>{{ registro.asistencia.nombre_responsable }}</td>
+            <td>{{ registro.estado }}</td>
+            <td><a class="btn btn-primary" href="{% url 'admin:modelo_asistencia_change' registro.asistencia.pk %}" target="_blank">Editar registro</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    <ul class="pager">
+                        {% if registros.paginator.num_pages > 3 %}<li><a href="?page=1">Primera</a></li>{% endif %}
+                        <li {% if not registros.has_previous %}class="disabled"{% endif %}>
+                            <a href="{% if registros.has_previous %}?page={{ registros.previous_page_number }}{% else %}#{% endif %}" >Anterior</a></li>
+                        <li>Página {{ registros.number }} de {{ registros.paginator.num_pages }}</li>
+                        <li {% if not registros.has_next %}class="disabled"{% endif %}>
+                            <a href="{% if registros.has_next %}?page={{ registros.next_page_number }}{% else %}#{% endif %}" >Siguiente</a></li>
+                        {% if registros.paginator.num_pages > 3 %}<li><a href="?page={{ registros.paginator.num_pages }}">Última</a></li>{% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+{% endblock %}
+
+{% block extra_js %}
+    {% compress js %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+{#                $(".alta select, .baja select").attr('data-placeholder', 'Seleccione el personal');#}
+{#                $("input.submit").click(function(e){#}
+{#                    e.preventDefault();#}
+{#                    var msg = "";#}
+{#                    var id_form = $(this).data("rel");#}
+{#                    if (id_form == "#alta-form"){#}
+{#                        msg = 'Está a punto de dar de <b>alta</b> las personas seleccionadas. ¿Desea continuar?';#}
+{##}
+{#                    } else {#}
+{#                        msg = 'Está a punto de dar de <b>baja</b> las personas seleccionadas. ¿Desea continuar?';#}
+{#                    }#}
+{#                    showConfirm(#}
+{#                        'Movimiento de personal', msg, function(){$(id_form).submit();}#}
+{#                    );#}
+{#                });#}
+{##}
+{#                $(".alta select, .baja select").chosen({#}
+{#                    'search_contains':true,#}
+{#                    'no_results_text': "No se encontraron coicidencias!",#}
+{#                });#}
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}

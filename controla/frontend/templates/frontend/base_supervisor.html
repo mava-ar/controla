@@ -19,9 +19,29 @@
               <li><a href="{% url 'supervisor_frontend:porcentaje_persona_proyecto' %}">Asistencia por CC</a></li>
           </ul>
       </li>
+        <li class="pull-right">{% bootstrap_form buscar_persona_form %}</li>
     </ul>
+
     {% block subtitle %}
         <h2 class="main-title">{% block sub_title %}Control de ausentismo{% endblock %}</h2>
     {% endblock %}
     {% block supervisor_content %}{% endblock %}
 {% endblock %}
+{% block extra_js %}
+    {{ block.super }}
+    {% compress js %}
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function () {
+                $("#id_persona-autocomplete").removeAttr("disabled");
+
+                $("#id_persona").change(function() {
+                    id = $("#id_persona").val();
+                    if(id) window.location = '/supervisor/personal/' + id + "/";   {# feo, pero no puedo resolver la url antes #}
+                });
+            });
+        })(jQuery);
+    </script>
+    {% endcompress %}
+{% endblock %}
+

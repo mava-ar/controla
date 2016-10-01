@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import resolve
 from django.utils.decorators import method_decorator
 
+from frontend.forms import BuscarPersonalForm
 from users.models import User
 
 
@@ -38,3 +39,11 @@ class SupervisorViewMixin(BaseFrontendViewMixin):
             return False
 
         return True
+
+
+class SupervisorBuscarPersonaMixin(object):
+
+    def get_context_data(self, **kwargs):
+        ctx = super(SupervisorBuscarPersonaMixin, self).get_context_data(*kwargs)
+        ctx["buscar_persona_form"] = BuscarPersonalForm()
+        return ctx
