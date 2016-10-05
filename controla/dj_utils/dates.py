@@ -51,3 +51,9 @@ def format_date(date, dt_format="%d/%m/%Y"):
 
 def now_timestamp():
     return calendar.timegm(datetime.now().timetuple())
+
+
+def daterange(start_date, end_date, inclusive=True):
+    inclusive = 1 if inclusive else 0
+    for n in range(int((end_date - start_date).days) + inclusive):
+        yield (start_date + timedelta(n)).date()

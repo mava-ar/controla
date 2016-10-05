@@ -9,9 +9,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.transaction import atomic
 
-from django_filters import views, FilterSet
+from django_filters import views as filter_view, FilterSet
 
-from modelo.filters import DetallePersonaFilter
+from modelo.filters import DetallePersonaFilter, RegistroPorFechaProyectoFilter
 from modelo.models import Responsable, Asistencia, Proyecto, Persona, RegistroAsistencia
 from frontend.views.mixins import SupervisorViewMixin, SupervisorBuscarPersonaMixin
 from frontend.forms import FusionarProyectosForm
@@ -68,6 +68,33 @@ class PorcentajePersonaProyectoView(BaseReportView, SupervisorBuscarPersonaMixin
         data["table"] = get_porcentaje_cc(
             data["fecha_desde"], data["fecha_hasta"])
         return data
+
+
+class ResumenDiasTrabajadosView(SupervisorViewMixin, SupervisorBuscarPersonaMixin, TemplateView):
+    template_name = "frontend/resumen_dias_trabajados.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ResumenDiasTrabajadosView, self).get_context_data(**kwargs)
+        qs = RegistroAsistencia.objects.select_related('asistencia')
+        ctx["generar"] = False
+        if "generar-reporte" in self.request.GET:
+            ctx["filter"] = RegistroPorFechaProyectoFilter(self.request.GET, queryset=qs)
+            if ctx["filter"].form.is_valid():
+                ctx["generar"] = True
+        else:
+            ctx["filter"] = RegistroPorFechaProyectoFilter()    
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+        ctx = self.get_context_data(**kwargs)
+        if ctx["generar"]:
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=Report.xlsx'
+            xlsx_data = ExportToExcel().fill_resumen_dias_trabajados(ctx)
+            response.write(xlsx_data)
+            return response
+        else:
+            return super(ResumenDiasTrabajadosView, self).get(request, *args, **kwargs)
 
 
 class ReasignarPersonalView(SupervisorViewMixin, BaseReasignarPersonalView):
@@ -260,7 +287,10 @@ class VerDetallesPersona(SupervisorViewMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super(VerDetallesPersona, self).get_context_data(**kwargs)
         qs = RegistroAsistencia.objects.select_related('asistencia').filter(persona=self.object).order_by('-asistencia__fecha')
-        ctx['filter'] = DetallePersonaFilter(self.request.GET, queryset=qs)
+        if "filtered" in self.request.GET:
+            ctx['filter'] = DetallePersonaFilter(self.request.GET, queryset=qs)
+        else:
+            ctx['filter'] = DetallePersonaFilter(queryset=qs)
         paginator = Paginator(ctx['filter'].qs, 25)
         try:
             queryset = paginator.page(self.request.GET.get("page", 1))
@@ -280,6 +310,7 @@ baja_personal = BajaPersonalView.as_view()
 datos_porcentuales = DatosPorcentualesView.as_view()
 asistencia_persona = AsistenciaPorEstadoView.as_view()
 porcentaje_persona_proyecto = PorcentajePersonaProyectoView.as_view()
+resumen_dias_trabajados = ResumenDiasTrabajadosView.as_view()
 export_porcentual = ExportDatosPorcentualesView.as_view()
 export_asistencia = ExportAsistenciaPorEstadoView.as_view()
 export_asistencia_cc = ExportPorcentajePersonaProyectoView.as_view()

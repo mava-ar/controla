@@ -14,7 +14,7 @@
     {% for field in filter.form %}
         {% if field.name == 'fecha' %}
             <div class="col-sm-6">
-            <div class="form-group has-success">
+            <div class="form-group">
                 <label class="control-label" for="id_fecha">Fecha</label>
                 <div class="input-group">
                 <input type="text" class="form-control datepicker" placeholder="Desde" name="fecha_0">
@@ -28,7 +28,7 @@
         {%  endif %}
     {% endfor %}
     </div>
-    <input class="btn btn-primary" type="submit" value="Filtrar" />
+    <input class="btn btn-primary" type="submit" value="Filtrar" name="filtered" />
     </form>
     <div class="panel panel-primary">
             <div class="panel-heading"><h4>Estadística histórica de asistencia</h4>

@@ -18,3 +18,9 @@ def get_percentage(values):
         v = round(value*100.0/total, 2)
         percentage.append(str(v)+" %")
     return percentage
+
+
+def sort_dict(adict, reverse=False):
+    keys = adict.keys()
+    keys = sorted(keys, reverse=reverse)
+    return zip(keys, map(adict.get, keys))

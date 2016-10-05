@@ -12,3 +12,16 @@ class DetallePersonaFilter(FilterSet):
     class Meta:
         model = RegistroAsistencia
         fields = ('fecha', 'proyecto', 'nombre_responsable', 'estado')
+
+
+class RegistroPorFechaProyectoFilter(FilterSet):
+    fecha = DateFromToRangeFilter(
+        name='asistencia__fecha', required=True, help_text="Seleccione el rango de fechas del reporte.",
+        widget=RangeWidget(attrs={'placeholder': 'DD/MM/YYYY', 'class': 'form-control datepicker'}))
+    proyecto = ModelChoiceFilter(
+        queryset=Proyecto.objects.all(), name='asistencia__proyecto', required=True,
+        help_text="Seleccione un proyecto.")
+
+    class Meta:
+        model = RegistroAsistencia
+        fields = ('fecha', 'proyecto', )

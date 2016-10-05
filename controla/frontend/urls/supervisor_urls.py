@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^datos_porcentuales/$', views.datos_porcentuales, name="datos_porcentuales"),
     url(r'^asistencia_estado/$', views.asistencia_persona, name="asistencia_estado"),
     url(r'^persona_proyecto/$', views.porcentaje_persona_proyecto, name="porcentaje_persona_proyecto"),
+    url(r'^resumen_dias_trabajados/$', views.resumen_dias_trabajados, name="resumen_dias_trabajados"),
+
     url(r'^export_porcentual/$', views.export_porcentual, name="export_porcentual"),
     url(r'^export_asistencia/$', views.export_asistencia, name="export_asistencia"),
     url(r'^export_asistencia_cc/$', views.export_asistencia_cc, name="export_asistencia_cc"),

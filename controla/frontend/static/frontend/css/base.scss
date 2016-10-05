@@ -181,3 +181,13 @@ form {
     border-bottom: none;
     background-color: #FFF;
 }
+
+.date-range {
+  input, select{
+    &.datepicker {
+      width: calc(50% - 3px);
+      display: inline;
+    }
+    width: calc(100% - 2px);
+  }
+}

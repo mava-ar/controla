@@ -44,7 +44,7 @@ class ReasignarPersonalForm(forms.Form):
 
 
 class BuscarPersonalForm(forms.Form):
-    persona = ModelChoiceField('PersonaAutocomplete', label="Buscar persona")
+    persona = ModelChoiceField('PersonaAutocomplete', label="Buscar persona: ")
 
     class Meta:
         fiels = ('persona', )

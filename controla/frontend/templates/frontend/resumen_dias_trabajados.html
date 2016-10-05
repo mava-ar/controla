@@ -1,0 +1,23 @@
+{% extends "frontend/base_data_report.html" %}
+{% load compress frontend_tags bootstrap3 repl %}
+{% block report %}active{% endblock %}
+{% block total_report %}
+    <span class="panel text-primary">Mostrando registros de {{ table|length|add:"-2" }} días.</span>{% endblock %}
+{% block sub_title %}Resumen de días trabajados{% endblock %}
+{% block btn_export %}
+    <a class="btn btn-default" data-actions="export" data-url="{% url 'supervisor_frontend:export_porcentual' %}">Exportar</a>
+{% endblock %}
+{% block supervisor_content %}
+    <form action="" method="get">
+    <div class="row">
+        <div class="col-sm-6 date-range">
+        {% bootstrap_form filter.form layout='horizontal' %}
+        </div>
+        <div class="col-sm-6"><div class="col-sm-6">
+            <input class="btn btn-primary" type="submit" value="Generar reporte" name="generar-reporte"/>
+        </div></div>
+    </div>
+    </form>
+
+
+{% endblock %}

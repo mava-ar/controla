@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from django.db.models import Count, Case, When
 
 from modelo.models import Proyecto, RegistroAsistencia, Persona, Estado, Responsable
+from dj_utils.dates import daterange
+from dj_utils.utils import sort_dict
 
 logger = logging.getLogger(__name__)
 
@@ -64,17 +66,6 @@ def porcentaje_asistencia_persona(hoy=None):
     return total, registros # "{}".format(val)
 
 
-def daterange(start_date, end_date):
-    for n in range(int((end_date - start_date).days)):
-        yield (start_date + timedelta(n)).date()
-
-
-def sort_dict(adict, reverse=False):
-    keys = adict.keys()
-    keys = sorted(keys, reverse=reverse)
-    return zip(keys, map(adict.get, keys))
-
-
 def evolucion_registros_asistencia(start_date, ends_date):
     """
     Devuelve los datos para el gráfico de codigo de barras con los presentes y ausentes
@@ -91,7 +82,7 @@ def evolucion_registros_asistencia(start_date, ends_date):
 
     report = list()
     data_table = list()
-    for day in daterange(start_date, ends_date + timedelta(days=1)):
+    for day in daterange(start_date, ends_date):
         aux = list()
         aux.append(day)
         aux.append(processed.get(day, {}).get(True, 0))
@@ -102,7 +93,7 @@ def evolucion_registros_asistencia(start_date, ends_date):
         series = dict()
         series["key"] = est
         series["values"] = list()
-        for day in daterange(start_date, ends_date + timedelta(days=1)):
+        for day in daterange(start_date, ends_date):
             if est == "Presentes":
                 val = processed.get(day, {}).get(True, 0)
             else:
@@ -134,7 +125,7 @@ def evolucion_registros_x_estado(start_date, ends_date):
         series = {}
         series["key"] = est
         series["values"] = list()
-        for day in daterange(start_date, ends_date + timedelta(days=1)):
+        for day in daterange(start_date, ends_date):
             val = processed.get(day, {}).get(est, 0)
             series["values"].append({'x': day.isoformat(), 'y': val})
 
@@ -173,7 +164,7 @@ def get_datos_porcentuales(start, end):
 
     totales_row = ["Totales", False,]
 
-    for day in daterange(start, end + timedelta(days=1)):
+    for day in daterange(start, end):
         aux = list()
         aux.append(day)
         aux.append(day.isoweekday() in [6,7])
