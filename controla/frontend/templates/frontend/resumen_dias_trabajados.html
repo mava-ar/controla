@@ -1,5 +1,5 @@
 {% extends "frontend/base_data_report.html" %}
-{% load compress frontend_tags bootstrap3 repl %}
+{% load compress frontend_tags bootstrap3 %}
 {% block report %}active{% endblock %}
 {% block total_report %}
     <span class="panel text-primary">Mostrando registros de {{ table|length|add:"-2" }} días.</span>{% endblock %}
