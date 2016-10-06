@@ -251,6 +251,13 @@ class ExportToExcel(ExportExcelMixin):
             'border': 1,
             'font_size': 9,
         })
+        normal_left = self.workbook.add_format({
+            'color': 'black',
+            'align': 'left',
+            'valign': 'vcenter',
+            'border': 1,
+            'font_size': 9,
+        })
         normal_color = self.workbook.add_format({
             'bg_color': '#b6eda8',
             'color': 'black',
@@ -268,6 +275,14 @@ class ExportToExcel(ExportExcelMixin):
             'border': 1,
             'font_size': 9,
         })
+        xs_total_color_left = self.workbook.add_format({
+            'bg_color': '#c6a5a5',
+            'color': 'black',
+            'align': 'left',
+            'valign': 'vcenter',
+            'border': 1,
+            'font_size': 9,
+        })
         cant_dias = len(rango_de_dias)
         # título
         worksheet_s.merge_range(0, 0, 0, 3, "")
@@ -280,8 +295,8 @@ class ExportToExcel(ExportExcelMixin):
         worksheet_s.merge_range(1, 2, 1, 3, datetime.now(), header_date)
 
         worksheet_s.merge_range(1, 4, 1, 14, "Operación (Proyecto / Servicio):", header)
-        worksheet_s.merge_range(1, 15, 1, 3 + cant_dias,
-                                str(context["filter"].form.cleaned_data["proyecto"]), header)
+        proyecto_name = str(context["filter"].form.cleaned_data["proyecto"]) if context["filter"].form.cleaned_data["proyecto"] else "Todos"
+        worksheet_s.merge_range(1, 15, 1, 3 + cant_dias, proyecto_name, header)
 
         referencias = dict(Estado.objects.values_list("codigo", "situacion"))
 
@@ -304,7 +319,7 @@ class ExportToExcel(ExportExcelMixin):
 
         # buscamos las personas, las ordenamos por apellido
         personas = context["filter"].qs.values_list(
-            'persona_id', 'persona__apellido', 'persona__nombre', 'persona__cuil').order_by(
+            'persona_id', 'persona__apellido', 'persona__nombre', 'persona__cuil', 'persona__cct__nombre').order_by(
             "persona__apellido", "persona__nombre").distinct()
 
         row_init_data = item = 5  # primer fila con datos
@@ -314,12 +329,11 @@ class ExportToExcel(ExportExcelMixin):
 
         for persona in personas:
             # datos de empleado
-            worksheet_s.write_row(item, 0, [
-                item-4,  # item
-                "{}, {}".format(persona[1], persona[2]),  # nombre
-                persona[3],  # cuit
-                ""  # categoria
-            ], normal)
+            worksheet_s.write(item, 0, item-4, normal)  # item
+            worksheet_s.write(item, 1, "{}, {}".format(persona[1], persona[2]), normal_left)  # nombre
+            worksheet_s.write(item, 2, persona[3], normal)  # cuit
+            worksheet_s.write(item, 3, persona[4], normal)  # categoria
+
             col = 4  # columna de datos de asistencia
             avance = 0  # avance de la columna
             asistencia = dict(context["filter"].qs.filter(
@@ -362,7 +376,7 @@ class ExportToExcel(ExportExcelMixin):
         for estado in referencias.keys():
             col = 4  # columna de datos de asistencia
             avance = 0  # avance de la columna
-            worksheet_s.merge_range(item, 0, item, 3, "TOTAL {}".format(referencias.get(estado)), xs_total_color)
+            worksheet_s.merge_range(item, 0, item, 3, "TOTAL {}".format(referencias.get(estado)), xs_total_color_left)
             # recorremos los días
             for dia in rango_de_dias:
                 totales_dia = Counter(totales_diarios.get(dia, []))
@@ -395,9 +409,9 @@ class ExportToExcel(ExportExcelMixin):
         worksheet_s.set_row(0, 45)
         worksheet_s.set_row(1, 30)
         worksheet_s.set_column(0, 0, 5)
-        worksheet_s.set_column(1, 1, 40)
+        worksheet_s.set_column(1, 1, 35)
         worksheet_s.set_column(2, 2, 15)
-        worksheet_s.set_column(3, 3, 10)
+        worksheet_s.set_column(3, 3, 20)
         worksheet_s.set_column(4, 4 + cant_dias, 5)
         worksheet_s.freeze_panes(5, 2)
         return self.prepare_response()

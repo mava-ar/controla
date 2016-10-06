@@ -19,7 +19,7 @@ class RegistroPorFechaProyectoFilter(FilterSet):
         name='asistencia__fecha', required=True, help_text="Seleccione el rango de fechas del reporte.",
         widget=RangeWidget(attrs={'placeholder': 'DD/MM/YYYY', 'class': 'form-control datepicker'}))
     proyecto = ModelChoiceFilter(
-        queryset=Proyecto.objects.all(), name='asistencia__proyecto', required=True,
+        queryset=Proyecto.objects.all(), name='asistencia__proyecto', required=False,
         help_text="Seleccione un proyecto.")
 
     class Meta:
