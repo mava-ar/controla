@@ -39,7 +39,7 @@ def calc_porc(num, div):
     if div == 0:
         return "0"
     val = num * 100 / div
-    return val
+    return "{:.1f}".format(val)
 
 
 @register.assignment_tag

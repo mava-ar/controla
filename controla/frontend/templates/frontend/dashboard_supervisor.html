@@ -10,7 +10,7 @@
                     Total de toma de asistencia (Proyecto)
                 </div>
                 <div class="panel-body" title="{{ total_proy }} proyectos activos, {{ num_asis_proy }} enviaron su asistencia.">
-                    {% calc_porc_int total_proy num_asis_proy as proc_proy %}
+                    {% calc_porc num_asis_proy total_proy as proc_proy %}
                     <h3>{{ proc_proy }}% de planillas enviadas</h3>
                     <div class="progress progress-striped active">
                         <div class="progress-bar" style="width: {{ proc_proy }}%"></div>
@@ -24,7 +24,7 @@
                     Total de toma de asistencia (Personas)
                 </div>
                 <div class="panel-body" title="{{ total_persona }} personas activas, {{ num_asis_persona }} con resgistro de asistencia.">
-                    {% calc_porc_int total_persona num_asis_persona as proc_pers %}
+                    {% calc_porc num_asis_persona total_persona as proc_pers %}
                     <h3>{{ proc_pers }}% del personal registrado</h3>
                     <div class="progress progress-striped active">
                     <div class="progress-bar" style="width: {{ proc_pers }}%"></div>

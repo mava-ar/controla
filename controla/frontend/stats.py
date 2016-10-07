@@ -49,9 +49,9 @@ def porcentaje_actividad(hoy=None):
         return 0
 
     noociosos = RegistroAsistencia.objects.filter(asistencia__fecha=hoy, estado__no_ocioso=True).count()
-    val = int(noociosos * 100 / total)
-    logger.debug("Total asistencias: {} | Total no aciosos: {} | %: {}".format(total, noociosos, val))
-    return "{}".format(val)
+    val = noociosos * 100 / total
+    logger.debug("Total asistencias: {:.1f} | Total no aciosos: {:.1f} | %: {:.1f}".format(total, noociosos, val))
+    return "{:.1f}".format(val)
 
 
 def porcentaje_asistencia_persona(hoy=None):
