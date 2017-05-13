@@ -8,7 +8,7 @@ class ProyectoManager(models.Manager):
         return super(ProyectoManager, self).get_queryset()
 
     def get_queryset(self):
-        return super(ProyectoManager, self).get_queryset().filter(fecha_baja=None)
+        return self.get_base_queryset().filter(fecha_baja=None)
 
 
 class ProyectoConPersonasManager(ProyectoManager):
@@ -25,7 +25,7 @@ class PersonaManager(models.Manager):
         return super(PersonaManager, self).get_queryset()
 
     def get_queryset(self):
-        return super(PersonaManager, self).get_queryset().filter(fecha_baja=None)
+        return self.get_base_queryset().filter(fecha_baja=None)
 
 
 class RegistroAsistenciaManager(models.Manager):
@@ -34,3 +34,18 @@ class RegistroAsistenciaManager(models.Manager):
     """
     def get_queryset(self):
         return super(RegistroAsistenciaManager, self).get_queryset().select_related('estado')
+
+
+class ResponsableManager(models.Manager):
+    """
+    Responsables activos (proyecto activo, persona activa y usuario activo).
+    """
+    def get_base_queryset(self):
+        return super(ResponsableManager, self).get_queryset()
+
+    def get_queryset(self):
+        return self.get_base_queryset().filter(
+            proyecto__fecha_baja=None,
+            persona__fecha_baja=None,
+            persona__usuario__is_active=True
+        )

@@ -158,9 +158,10 @@ class IndexResponsable(SupervisorViewMixin, SupervisorBuscarPersonaMixin, Templa
 
     def get_context_data(self, **kwargs):
         data = super(IndexResponsable, self).get_context_data(**kwargs)
-        data["responsables"] = [(x[0], "{} {}".format(x[1], x[2])) for x in
-                                     Responsable.objects.values_list(
-                                             'persona__pk', 'persona__apellido', 'persona__nombre').order_by('persona').distinct()]
+        data["responsables"] = [
+            (x[0], "{} {}".format(x[1], x[2])) for x in
+            Responsable.activos.values_list('persona__pk', 'persona__apellido', 'persona__nombre').order_by(
+                'persona').distinct()]
         return data
 
 

@@ -17,7 +17,6 @@ class BaseFrontendViewMixin(object):
 
         return super(BaseFrontendViewMixin, self).dispatch(request, *args, **kwargs)
 
-
     def render_to_response(self, context, **response_kwargs):
         response_kwargs['current_app'] = resolve(self.request.path).namespace
         return super(BaseFrontendViewMixin, self).render_to_response(context, **response_kwargs)

@@ -3,12 +3,11 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.conf import settings
 from django.utils import timezone
-from django.core.cache import cache
 
 from simple_history.models import HistoricalRecords
 
 from dj_utils.models import BaseModel, BaseModelWithHistory
-from .managers import ProyectoManager, PersonaManager, ProyectoConPersonasManager
+from .managers import ProyectoManager, PersonaManager, ProyectoConPersonasManager, ResponsableManager
 
 
 class Estado(BaseModelWithHistory):
@@ -24,7 +23,6 @@ class Estado(BaseModelWithHistory):
                                     help_text="Seleccione esta opción para indicar "
                                               "que el estado no implica ociosidad por parte del empleado")
     history = HistoricalRecords()
-
 
     class Meta:
         verbose_name = "estado"
@@ -77,6 +75,9 @@ class Responsable(BaseModelWithHistory):
     Representa al responsable del proyecto, junto a sus configuraciones.
 
     """
+    objects = models.Manager()
+    activos = ResponsableManager()
+
     persona = models.ForeignKey("Persona", verbose_name="persona", related_name="responsable_rel", null=True)
     proyecto = models.OneToOneField(Proyecto, verbose_name="proyecto", related_name="responsable_rel", null=True)
     history = HistoricalRecords()
@@ -110,7 +111,6 @@ class CCT(BaseModelWithHistory):
     @property
     def total_personas(self):
         return "{} personas".format(self.personas.count())
-
 
 
 class Persona(BaseModelWithHistory):
@@ -212,7 +212,6 @@ class RegistroAsistencia(BaseModelWithHistory):
         verbose_name = "registro de asistencia"
         verbose_name_plural = "registros de asistencia"
         unique_together = ('asistencia', 'persona', )
-
 
     def __str__(self):
         return "{} - {}".format(self.persona, self.asistencia)

@@ -185,8 +185,8 @@ class BaseAltaAsistenciaView(CreateView):
 
     def get_context_data(self, **kwargs):
         data = super(BaseAltaAsistenciaView, self).get_context_data(**kwargs)
-        personas = [ (x["pk"], "{} {}".format(x["apellido"], x["nombre"]) ) for x in Persona.objects.filter(
-                        proyecto=self.proyecto).values('pk', 'apellido','nombre').order_by('apellido', 'nombre')]
+        personas = [(x["pk"], "{} {}".format(x["apellido"], x["nombre"])) for x in Persona.objects.filter(
+                        proyecto=self.proyecto).values('pk', 'apellido', 'nombre').order_by('apellido', 'nombre')]
         registros_existente = RegistroAsistencia.objects.filter(
                 persona_id__in=personas, asistencia__fecha=datetime.now()).select_related(
                 "asistencia__proyecto, persona").values(

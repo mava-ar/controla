@@ -3,6 +3,7 @@ from django.contrib.auth import views
 
 from frontend.views.base import index, logout
 
+
 urlpatterns = [
     url(r'^logout/', logout, name='logout'),
     url(r'^login/$', views.login, {'template_name': 'auth/login.html'}, name='login'),
@@ -22,6 +23,7 @@ urlpatterns = [
     url(r'^reset/done/$', views.password_reset_complete, {'template_name': 'auth/password_reset_complete.html'},
         name='password_reset_complete'),
 ]
+
 
 urlpatterns += [
     url(r'^responsable/', include('frontend.urls.responsable_urls', namespace='responsable_frontend', app_name='frontend')),
