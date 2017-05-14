@@ -17,7 +17,8 @@ class EstadoAdmin(SimpleHistoryAdmin):
 
 @admin.register(Proyecto)
 class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
-    list_display = ('nombre', 'codigo', 'total_personas', 'responsable', 'activo_status')
+    list_display = ('nombre', 'codigo', 'codigo_contable', 'numero_contrato',
+                    'total_personas', 'responsable', 'activo_status')
     search_fields = ('nombre', 'codigo', 'codigo_contable', 'numero_contrato')
     ordering = ('fecha_baja', )
 
