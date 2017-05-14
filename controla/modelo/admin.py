@@ -18,7 +18,7 @@ class EstadoAdmin(SimpleHistoryAdmin):
 @admin.register(Proyecto)
 class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
     list_display = ('nombre', 'codigo', 'total_personas', 'responsable', 'activo_status')
-    search_fields = ('nombre', 'codigo', )
+    search_fields = ('nombre', 'codigo', 'codigo_contable', 'numero_contrato')
     ordering = ('fecha_baja', )
 
     actions = [dar_de_baja, ]
@@ -30,7 +30,7 @@ class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
     activo_status.short_description = "¿Activo?"
 
     def responsable(self, obj):
-        if not obj.responsable_rel is None:
+        if obj.responsable_rel is not None:
             return obj.responsable_rel.persona
         else:
             return ""
@@ -46,6 +46,7 @@ class ProyectoAdmin(SimpleHistoryAdmin, ExportActionModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 @admin.register(CCT)
 class CCTAdmin(SimpleHistoryAdmin):

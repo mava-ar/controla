@@ -1,3 +1,4 @@
+# coding: utf-8
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import post_save
@@ -41,6 +42,9 @@ class Proyecto(BaseModelWithHistory):
     """
     nombre = models.CharField("nombre", max_length=255, unique=True)
     codigo = models.CharField("codigo", max_length=255)
+    # Código contable - Número  de  contrato
+    codigo_contable = models.CharField("código contable", max_length=255, blank=True, null=True)
+    numero_contrato = models.CharField("número de contrato", max_length=255, blank=True, null=True)
     fecha_baja = models.DateField("fecha de baja", null=True, blank=True)
     history = HistoricalRecords()
 
@@ -59,7 +63,12 @@ class Proyecto(BaseModelWithHistory):
             raise ValidationError({'nombre': ["Nombre de proyecto existente. Por favor, elija otro!",]})
 
     def __str__(self):
-        return self.nombre if self.nombre else "Sin nombre"
+        nombre = self.nombre if self.nombre else "Sin nombre"
+        if self.codigo_contable:
+            nombre += " Contable: %s" % self.codigo_contable
+        if self.numero_contrato:
+            nombre += " Contrato: %s" % self.numero_contrato
+        return nombre
 
     @property
     def total_personas(self):

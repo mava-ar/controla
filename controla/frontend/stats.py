@@ -275,6 +275,7 @@ def get_porcentaje_cc(start, end):
             report.append(aux)
     return report
 
+
 def calcular_porcentaje_estado_muestra(persona_id):
     data = RegistroAsistencia.objects.select_related('asistencia').filter(persona_id=persona_id).values_list(
         'estado__codigo', 'estado__situacion').annotate(cant=Count('estado_id'))

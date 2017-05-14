@@ -287,7 +287,8 @@ class VerDetallesPersona(SupervisorViewMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super(VerDetallesPersona, self).get_context_data(**kwargs)
-        qs = RegistroAsistencia.objects.select_related('asistencia').filter(persona=self.object).order_by('-asistencia__fecha')
+        qs = RegistroAsistencia.objects.select_related('asistencia').filter(
+            persona=self.object).order_by('-asistencia__fecha')
         if "filtered" in self.request.GET:
             ctx['filter'] = DetallePersonaFilter(self.request.GET, queryset=qs)
         else:

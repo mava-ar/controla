@@ -15,7 +15,10 @@
                         </div>
                         <div class="col-xs-10 text-left">
                             <h4><strong>{{ f.nombre }}</strong></h4>
-                            <h5>{{ f.total_personas }}</h5>
+                            <h5>{{ f.total_personas }}
+{#                                {% if f.codigo_contable %} - f.codigo_contable{% endif %}#}
+                                {% if f.numero_contrato %} - f.numero_contrato{% endif %}
+                            </h5>
                         </div>
                     </a>
                 {% endwith %}
