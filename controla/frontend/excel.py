@@ -193,11 +193,11 @@ class ExportToExcel(ExportExcelMixin):
                     except:
                         cal = 0
                     worksheet_s.write(
-                            row, it, cal/100 if it == 4 else x , self.style_dict["normal_perc"] if it == 4 else self.style_dict["normal"])
+                            row, it, cal/100 if it == 6 else x, self.style_dict["normal_perc"] if it == 6 else self.style_dict["normal"])
                     it += 1
             row += 1
-        worksheet_s.set_column(0, 4, 25)
-        worksheet_s.autofilter('A1:E1')
+        worksheet_s.set_column(0, 6, 25)
+        worksheet_s.autofilter('A1:G1')
         worksheet_s.freeze_panes(1, 1)
         return self.prepare_response()
 

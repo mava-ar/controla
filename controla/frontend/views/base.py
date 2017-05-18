@@ -148,7 +148,7 @@ class BaseReportView(SupervisorViewMixin):
         return data
 
     def dispatch(self, request, *args, **kwargs):
-        if not 'fecha_desde' in request.GET:
+        if 'fecha_desde' not in request.GET:
             start, stop = get_30_days()
             return HttpResponseRedirect('%s?fecha_desde=%s&fecha_hasta=%s' % (
                 request.path, format_date(start), format_date(stop)

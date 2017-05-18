@@ -27,7 +27,7 @@
                     {% if forloop.last %}
                         <td><strong>{{ y }} %</strong></td>
                     {% else %}
-                    <td>{{ y }}</td>
+                    <td>{{ y|default_if_none:"" }}</td>
                     {% endif %}
                 {%  endfor %}
                 </tr>

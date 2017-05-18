@@ -14,7 +14,11 @@
                 <select name="proyecto" id="id_proyecto"  class="form-control">
                     <option value="">Seleccione un proyecto</option>
                     {% for p in proyectos %}
-                        <option value="{{ p.pk }}">{{p.nombre }}</option>
+                        <option value="{{ p.pk }}">
+                            {{p.nombre }}
+                            {% if p.codigo_contable %}- Cble: {{ p.codigo_contable }} {% endif %}
+                            {% if p.numero_contrato %}- Ctto: {{ p.numero_contrato }}{% endif %}
+                        </option>
                     {% endfor %}
                     </select>
             </div>

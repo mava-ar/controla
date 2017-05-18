@@ -252,15 +252,16 @@ def get_porcentaje_cc(start, end):
     """
     processed = defaultdict(dict)
     totales = dict()
-    header = ["CCT", "APELLIDO NOMBRE", "C.U.I.L.", "PROYECTO", "Cuenta en ESTADO"]
+    header = ["CCT", "APELLIDO NOMBRE", "C.U.I.L.", "PROYECTO", "C. CONTABLE", "N° CONTRATO", "Cuenta en ESTADO"]
     qs = RegistroAsistencia.objects.filter(
         asistencia__fecha__gte=start, asistencia__fecha__lte=end)
-    qs = qs.values('persona__cct__nombre', 'persona__apellido','persona__nombre',
-                   'persona__cuil', 'asistencia__proyecto__nombre',
+    qs = qs.values('persona__cct__nombre', 'persona__apellido', 'persona__nombre',
+                   'persona__cuil', 'asistencia__proyecto__nombre', 'asistencia__proyecto__codigo_contable',
+                   'asistencia__proyecto__numero_contrato',
                    ).annotate(est=Count('pk'))
     for it in qs:
         persona = "{} {}".format(it["persona__apellido"], it["persona__nombre"])
-        processed[persona][it['asistencia__proyecto__nombre']]=it
+        processed[persona][it['asistencia__proyecto__nombre']] = it
         val = totales.get(persona, 0) + it["est"]
         totales[persona] = val
 
@@ -271,7 +272,10 @@ def get_porcentaje_cc(start, end):
         for row, data1 in data.items():
             aux = list()
             porc = data1["est"] * 100 / totales.get(nombre)
-            aux.extend([data1["persona__cct__nombre"], nombre, data1["persona__cuil"], row, "{0:.2f}".format(porc)])
+            aux.extend([
+                data1["persona__cct__nombre"], nombre, data1["persona__cuil"], row,
+                data1["asistencia__proyecto__codigo_contable"], data1["asistencia__proyecto__numero_contrato"],
+                "{0:.2f}".format(porc)])
             report.append(aux)
     return report
 
