@@ -17,7 +17,7 @@ def get_proyectos_estados(hoy=None):
     data = list(
         Proyecto.con_personas.annotate(
             ok=Count(Case(When(asistencias__fecha=hoy, then='asistencias__items__pk'))),
-        ).values_list('pk', 'nombre', 'responsable_rel__persona__apellido',
+        ).values_list('pk', 'nombre', 'codigo_contable', 'numero_contrato', 'responsable_rel__persona__apellido',
                       'responsable_rel__persona__nombre', 'ok').order_by('-ok'))
     total = dict(Proyecto.con_personas.annotate(
         total=Count(Case(When(personas_involucradas__fecha_baja__isnull=True,

@@ -16,8 +16,8 @@
                         <div class="col-xs-10 text-left">
                             <h4><strong>{{ f.nombre }}</strong></h4>
                             <h5>{{ f.total_personas }}
-{#                                {% if f.codigo_contable %} - f.codigo_contable{% endif %}#}
-                                {% if f.numero_contrato %} - f.numero_contrato{% endif %}
+                                {% if f.codigo_contable %}| Cble: <strong>{{ f.codigo_contable }}</strong>{% endif %}
+                                {% if f.numero_contrato %}| Ctto: <strong>{{ f.numero_contrato }}</strong>{% endif %}
                             </h5>
                         </div>
                     </a>

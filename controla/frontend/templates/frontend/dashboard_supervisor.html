@@ -116,13 +116,17 @@
                         <tbody>
                             {% for x in proyectos_estados %}
                             <tr class="{% if x.4 > 0 %}success{% else %}danger{% endif %}">
-                                <td>{{ x.1 }}</td>
-                                <td>{{ x.3 }}, {{ x.2 }}</td>
                                 <td>
-                                    {% if x.4 > 0 %}{{ x.4 }}
-                                        {% if x.4 != x.5 %} <a href="{% url "supervisor_frontend:asistencia_del_dia" x.0 %}" class="label label-warning">¡Revisar! Diferencia encontrada.</a>{% endif %}
+                                    {{ x.1 }}
+                                    {% if x.2 %} | Cble: <strong>{{ x.2 }}</strong>{% endif %}
+                                    {% if x.3 %} | Ctto: <strong>{{ x.3 }}</strong>{% endif %}
+                                </td>
+                                <td>{{ x.5 }}, {{ x.4 }}</td>
+                                <td>
+                                    {% if x.6 > 0 %}{{ x.6 }}
+                                        {% if x.6 != x.7 %} <a href="{% url "supervisor_frontend:asistencia_del_dia" x.0 %}" class="label label-warning">¡Revisar! Diferencia encontrada.</a>{% endif %}
                                     {% else %}--{% endif %}</td>
-                                <td>{{ x.5 }}</td>
+                                <td>{{ x.7 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
