@@ -168,27 +168,21 @@ class BaseAltaAsistenciaView(CreateView):
     def get_details_asistencia_url(self, pk):
         raise NotImplementedError
 
-    def checks_exists(self, **kwargs):
-        # averiguo si ya tomo la asistencia hoy
-        asistencia = Asistencia.objects.filter(proyecto=kwargs.get(self.pk_url_kwarg), fecha=datetime.now())
-        if asistencia:
-            messages.add_message(self.request, messages.INFO,
-                                 "Mostrardo la asistencia para el día de la fecha.")
-            # muestro la asistencia del día
-            return HttpResponseRedirect(self.get_details_asistencia_url(asistencia[0].pk))
-
-    def get(self, request, *args, **kwargs):
-        redirect = self.checks_exists(**kwargs)
-        if redirect:
-            return redirect
-        return super(BaseAltaAsistenciaView, self).get(request, *args, **kwargs)
+    def get_date(self):
+        date = datetime.now()
+        if self.request.GET.get('date'):
+            date = datetime.strptime(self.request.GET.get('date'), "%d/%m/%Y")
+        return date
 
     def get_context_data(self, **kwargs):
+        date = self.get_date()
         data = super(BaseAltaAsistenciaView, self).get_context_data(**kwargs)
+        asistencia_del_dia = Asistencia.objects.filter(proyecto=self.proyecto, fecha=date).first()
+        data["asistencia_del_dia"] = asistencia_del_dia
         personas = [(x["pk"], "{} {}".format(x["apellido"], x["nombre"])) for x in Persona.objects.filter(
                         proyecto=self.proyecto).values('pk', 'apellido', 'nombre').order_by('apellido', 'nombre')]
         registros_existente = RegistroAsistencia.objects.filter(
-                persona_id__in=personas, asistencia__fecha=datetime.now()).select_related(
+                persona_id__in=personas, asistencia__fecha=date).select_related(
                 "asistencia__proyecto, persona").values(
                 'persona_id', 'persona__nombre', 'persona__apellido', 'estado__codigo', 'estado__situacion',
                 'asistencia__proyecto__nombre')
@@ -207,16 +201,14 @@ class BaseAltaAsistenciaView(CreateView):
         return data
 
     def get_form_kwargs(self, **kwargs):
+        date = self.get_date()
         kwargs = super(BaseAltaAsistenciaView, self).get_form_kwargs(**kwargs)
         self.proyecto = Proyecto.objects.get(pk=self.kwargs.get(self.pk_url_kwarg))
         kwargs['initial']['proyecto'] =  self.proyecto
-        kwargs['initial']['fecha'] = datetime.now().strftime("%d/%m/%Y")
+        kwargs['initial']['fecha'] = date.strftime("%d/%m/%Y")
         return kwargs
 
     def post(self, request, *args, **kwargs):
-        redirect = self.checks_exists(**kwargs)
-        if redirect:
-            return redirect
         self.object = None
         form = self.get_form()
         formsets = RegistroAsistenciaFormSet(self.request.POST)
@@ -233,8 +225,6 @@ class BaseAltaAsistenciaView(CreateView):
         try:
             with atomic():
                 self.object = form.save(commit=False)
-                if not self.request.user.is_supervisor:
-                    self.object.fecha = datetime.now()
                 self.object.save()
                 for f in formsets:
                     reg = RegistroAsistencia()

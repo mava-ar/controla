@@ -25,15 +25,23 @@
                 {% bootstrap_field form.proyecto %}
                 <h4>Proyecto: <strong>{{ proyecto }}</strong></h4>
             </div>
-            <div class="col-sm-6"><h4>
-                Fecha: <strong>{% now "d/m/Y" %}</strong>
-            </h4></div>
-                <div style="display: none;">
-                    {% bootstrap_field form.fecha %}
-                </div>
+            <div class="col-sm-6">
+                {% bootstrap_field form.fecha layout='horizontal' horizontal_label_class='col-sm-2' size='small' %}
+            </div>
         {% endif %}
 
     </div>
+    {% if asistencia_del_dia %}
+        <p class="alert alert-success">
+            Ya fue registrada la asistencia del día {{ asistencia_del_dia.fecha|date:"d/m/Y" }}.
+        </p>
+        {% include "frontend/includes/_table_asistencia.html" with object=asistencia_del_dia registros=asistencia_del_dia.items.all %}
+        {% if request.user.is_supervisor %}
+        <a class="btn btn-default" href="{% url 'supervisor_frontend:index_responsable' %}">Volver</a>
+        {% else %}
+        <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
+        {% endif %}
+    {% else %}
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-info">
@@ -75,13 +83,14 @@
     </table>
 
     {% include 'frontend/includes/_personas_ya_registradas.html' %}
-        {% if request.user.is_supervisor %}
-        <a class="btn btn-default" href="{% url 'supervisor_frontend:index_responsable' %}">Volver</a>
+    {% if request.user.is_supervisor %}
+    <a class="btn btn-default" href="{% url 'supervisor_frontend:index_responsable' %}">Volver</a>
 
     {% else %}
-        <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
+    <a class="btn btn-default" href="{% url 'index' %}">Volver</a>
     {% endif %} |
-        <input type="submit" value="Guardar" class="submit btn btn-primary btn-submit"/>
+    <input type="submit" value="Guardar" class="submit btn btn-primary btn-submit"/>
+    {% endif %}
     </form>
 
 
@@ -100,7 +109,6 @@
                     $("table.alta-asistencia select").each(function(i,elem){
                         $(elem).val(new_elem);
                     });
-{#                    alta-asistencia#}
                 });
 
                 $(".btn-submit").click(function(e){
@@ -110,6 +118,11 @@
                                 function() {
                                     $("#asistencia_form").submit();
                                 });
+                });
+                $("#id_fecha").change(function() {
+                    var url = new URL(window.location.href);
+                    url.searchParams.set('date', $(this).val());
+                    window.location.href = url.href;
                 });
             });
         })(jQuery);

@@ -115,7 +115,7 @@
                         </thead>
                         <tbody>
                             {% for x in proyectos_estados %}
-                            <tr class="{% if x.4 > 0 %}success{% else %}danger{% endif %}">
+                            <tr class="{% if x.6 > 0 %}success{% else %}danger{% endif %}">
                                 <td>
                                     {{ x.1 }}
                                     {% if x.2 %} | Cble: <strong>{{ x.2 }}</strong>{% endif %}

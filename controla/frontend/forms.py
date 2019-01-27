@@ -17,6 +17,12 @@ class AltaAsistenciaForm(forms.ModelForm):
         model = Asistencia
         fields = ('proyecto', 'fecha', )
 
+    def clean(self):
+        cleaned_data = super(AltaAsistenciaForm, self).clean()
+        if cleaned_data["fecha"] > timezone.now().date():
+            raise ValidationError("No puede registrar la asistencia con fecha en el futuro.")
+        return cleaned_data
+
 
 
 class RegistroAsistenciaForm(forms.Form):
